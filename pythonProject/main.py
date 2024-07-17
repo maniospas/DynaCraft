@@ -443,24 +443,25 @@ def interpret(code):
 
 # input_str = ("float a = 2.0 + 1.0; a = 5.0; print_object(a);");
 
-input_str = ("def test(){ object o = object(); float x = 5.0; float y = 6.0; float o.sum = x + y; float o.te = x*y; return o;} "
-             "def test2(){ test t = test(); t.sum = 2.0;  float t.new = 3.0 + t.sum; return t;}"
-             "test2 t2= test2();"
-             "float c = t2.sum;"
-             "float d = t2.new;"
-             "print_object(c);"
-             "print_object(d);"
-             "test t= test();"
-             "float f = t.sum;"
-             "print_object(f);"
-             );
-#ef test2(){ test t = test(); float a = t.new;  t.new = 2.0; float a = t.new; float t.old = 3.0 + a; return t;}
-# input_str = ("float a = 5.0;"
-#              "a = 3.0;"
-#              "print_object(a);");
+if __name__ == "__main__":
+    # Example input string
+    input_str = ("def test(){ object o = object(); float x = 5.0; float y = 6.0; float o.sum = x + y; float o.te = x*y; return o;} "
+                 "def test2(){ test t = test(); t.sum = 2.0;  float t.new = 3.0 + t.sum; return t;}"
+                 "test2 t2= test2();"
+                 "float c = t2.sum;"
+                 "float d = t2.new;"
+                 "print_object(c);"
+                 "print_object(d);"
+                 "test t= test();"
+                 "float f = t.sum;"
+                 "print_object(f);"
+                 )
 
-parse_tree, test = interpret(input_str)
+    # Interpret the input string
+    parse_tree, test = interpret(input_str)
 
-print_expression_tree(parse_tree.pretty())
+    # Print the parse tree
+    print_expression_tree(parse_tree.pretty())
 
-print("test", test)
+    # Print the test result
+    print("test", test)
