@@ -48,7 +48,3 @@ class ContextFunctions:
         else:
             comp_result = Object({"value": 0}, types=["object", "float"])
         return comp_result
-
-    def visit(self, node):
-        # This method simulates visiting a node in a parsed tree and should be implemented based on your tree structure
-        return node

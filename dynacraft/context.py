@@ -1,14 +1,14 @@
 from lark import Lark, Tree, Token
 from lark.visitors import Interpreter
 from myLogger import print_info
-from dynacraft.support.basic_functions import Functions
-from dynacraft.support.context_functions import ContextFunctions as ContextFuns
+from dynacraft.support.builtins import Functions
+from dynacraft.support.arithmetic import ContextFunctions
 from dynacraft.support.core import ContextCore
 from dynacraft.objects.object import Object
 from dynacraft import helpers
 
 
-class Context(Interpreter, ContextCore):
+class Context(Interpreter, ContextCore, ContextFunctions):
     def __init__(self, parent=None):
         self.parent = parent
         self.types = {}
@@ -364,21 +364,6 @@ class Context(Interpreter, ContextCore):
 
     def paramdecl(self, items):
         return items
-
-    def add(self, node):
-        return ContextFuns.add(self, node)
-
-    def sub(self, node):
-        return ContextFuns.sub(self, node)
-
-    def mul(self, node):
-        return ContextFuns.mul(self, node)
-
-    def div(self, node):
-        return ContextFuns.div(self, node)
-
-    def smaller_than(self, node):
-        return ContextFuns.smaller_than(self, node)
 
     def derived(self, node):
         derived_name = node.children[0]

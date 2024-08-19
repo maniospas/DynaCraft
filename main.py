@@ -12,8 +12,6 @@ def interpret(code):
 if __name__ == "__main__":
     input_str = ("""
         int x = 1;
-        int y = 2;
-        int z = x + y;
         print(z);
     """)
     interpret(input_str)
