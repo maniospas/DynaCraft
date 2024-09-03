@@ -7,18 +7,27 @@ grammar = """
 start: statement*
 
 statement: semicolonstatements
+         | for_statement
          | methoddecl
          | if_statement
          | while_statement
          
+         
 
 semicolonstatements: basicstatement ";"
 
-basicstatement: returns
+basicstatement: listget
+              | returns
               | assignment
               | reassignment
               | vardecl
               | method
+              | listadd
+              | listdecl
+              
+              
+              
+              
 
 returns : "return" (assignment | reassignment | expression)
 
@@ -33,14 +42,24 @@ if_statement:"if" methodcall codeblock "else" codeblock
 
 while_statement:"while" comparison_operators":" codeblock
 
+for_statement: "for" "key" "in" NAME ":" codeblock
+
 methodparams : "(" ")"
-             | "(" paramdecl ")"
+             | "(" param_list ")"
 
 vardecl: vartype NAME  -> var_decl
 
+listdecl: "map" "[" vartype "," vartype "]" NAME "=" "map" "[" vartype "," vartype "]" "(" ")"
+
+listadd : NAME  "[" simpleexpression "]" "=" simpleexpression
+
+listget : "find" "(" NAME "[" simpleexpression "]" ")"
+
+param_list : paramdecl("," paramdecl)*
+
 paramdecl : vartype NAME
           | "self"
-          | paramdecl"," paramdecl
+          
 
 
 vartype : "string" -> string
@@ -51,7 +70,7 @@ vartype : "string" -> string
         | NAME -> derived
 
 codeblock : "{}"
-          | "{" (semicolonstatements | if_statement | while_statement)+ "}"
+          | "{" (semicolonstatements | listget | listadd | if_statement | while_statement)+ "}"
 
 
 method : methodcall  | blockexec 
@@ -61,13 +80,14 @@ methodcall : simpleexpression "(" (NAME | NUMBER | methodcall)? ("," (NAME | NUM
 
 blockexec : "<"NAME">"
 
-expression : simpleexpression | operators
+expression : listget |simpleexpression | operators
 
 simpleexpression: methodcall
           | NUMBER
           | blockexec 
           | assignable
           | simpleexpression "(" operators ")"
+          | STRING
 
 
 assignable: NAME
@@ -77,6 +97,7 @@ operators : expression "+" expression   -> add
           | expression "-" expression   -> sub
           | expression "*" expression   -> mul
           | expression "/" expression   -> div
+          | expression "^" expression   -> pow
           
 comparison_operators : expression "==" expression -> equal
                      | expression ">=" expression -> bigger_than
@@ -85,7 +106,7 @@ comparison_operators : expression "==" expression -> equal
 
 NAME: /([a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*)/
 NUMBER : /-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?/
-STRING : /".*?(?<!\\)"/
+STRING: /"([^"\\]|\\["\\bfnrt])*"/
 
 %ignore " "
 """

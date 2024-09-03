@@ -2,8 +2,10 @@ import copy
 
 
 class Object:
-    def __init__(self, fields=None, types=None):
+    def __init__(self, fields=None, types=None, keyType=None, objType=None):
         self.types = types if types is not None else ["object"]
+        self.keyType = keyType if keyType is not None else ["object"]
+        self.objType = objType if objType is not None else ["object"]
         self.private_fields = {}
         self.public_fields = {}
         self.fields = fields if fields is not None else {}
@@ -30,8 +32,14 @@ class Object:
         self.public_fields[key] = value
         self._track_field(key, "public")
 
+    def add_public_field(self, key, value):
+        if key not in self.public_fields:
+            self.public_fields[key] = []
+        self.public_fields[key].append(value)
+
     def set_initial_field(self, key, value):
         self.fields[key] = value
+
     def get_public_field(self, key):
         return self.public_fields.get(key, None)
 
@@ -103,5 +111,21 @@ class Object:
             raise AttributeError(f"{name} not found in public, private fields, or initial fields")
 
     def __str__(self):
-        return f"This is an object with types {self.types}, public fields {self.public_fields}, private fields {self.private_fields}"
+        return f"This is an object with types {self.types}, public fields {self.public_fields}, private fields {self.private_fields}, keyType {self.keyType}, objType {self.objType}"
 
+
+class BoolObject(Object):
+    def __init__(self, bool_value):
+        super().__init__(fields={"value": bool_value}, types=["object", "bool"])
+
+
+def my_int(value):
+    self = object()
+    self.data = value
+    return self
+
+
+def my_float(value):
+    self = object()
+    self.data = value
+    return self

@@ -5,7 +5,7 @@ class Functions:
     def object(self):
         return Object({}, types=["object"])
 
-    def print_object(obj, additional_arg=None):
+    def print(obj, additional_arg=None):
         if additional_arg is not None:
             print("Data:", additional_arg)
             # print("MyLanguageObject:")

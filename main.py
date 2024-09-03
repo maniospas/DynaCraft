@@ -10,8 +10,14 @@ def interpret(code):
 
 
 if __name__ == "__main__":
-    input_str = ("""
-        int x = 1;
-        print(z);
-    """)
+    # input_str = ("""
+    #     string x = 'Helloworld';
+    #     print(x);
+    # """)
+
+    input_str = (""" 
+                    string a = "hello21";
+                    print(a);
+                    """)
+
     interpret(input_str)

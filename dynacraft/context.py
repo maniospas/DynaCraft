@@ -5,7 +5,7 @@ from dynacraft.support.builtins import Functions
 from dynacraft.support.arithmetic import ContextFunctions
 from dynacraft.support.core import ContextCore
 from dynacraft.objects.object import Object
-from dynacraft import helpers
+from dynacraft.helpers import helpers
 
 
 class Context(Interpreter, ContextCore, ContextFunctions):
@@ -23,8 +23,8 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         if self.default_flag:
             self.default_flag = False
             if isinstance(tree, Tree):
-                obj_name = tree.children[0].children[0].children[0] #get object name since ree.children[0] is Tree('assignable', [Tree('simpleexpression', [Tree('assignable', [Token('NAME', 't')])]), Token('NAME', 'new')])
-                obj_field = tree.children[1] #get field name
+                obj_name = tree.children[0].children[0].children[0]  # get object name since ree.children[0] is Tree('assignable', [Tree('simpleexpression', [Tree('assignable', [Token('NAME', 't')])]), Token('NAME', 'new')])
+                obj_field = tree.children[1]  # get field name
                 obj_new = self.values[obj_name]
                 res_obj = obj_new.get_public_field(obj_field)
                 return res_obj
@@ -51,6 +51,18 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 raise Exception("invalid datatypes")
         self.values[name] = value
 
+    def start(self, node):
+        return ContextCore.start(self, node)
+
+    def statement(self, node):
+        return ContextCore.statement(self, node)
+
+    def semicolonstatements(self, node):
+        return ContextCore.semicolonstatements(self, node)
+
+    def basicstatement(self, node):
+        return ContextCore.basicstatement(self, node)
+
     def assignment(self, node):
         result = []
         result.append(node.children[0])
@@ -60,14 +72,14 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             der_result = self.visit(result[0])
             for child in node.children[1:]:
                 result.append(self.visit(child))
-            res = helpers.is_list_or_object(result[2], 1)
+            res = helpers.Is_list_or_object(result[2], 1)
             self.values[var_name] = res
             print_info(f"The saved item: {self.values[var_name]}")
             return self.values[var_name]
         else:
             for child in node.children[1:]:
                 result.append(self.visit(child))
-            res = helpers.is_list_or_object(result[2], 0)
+            res = helpers.Is_list_or_object(result[2], 0)
             if 'value' in result[1].fields:
                 var_name = result[1].get_public_field("value")
                 var_type = result[0].data
@@ -116,19 +128,8 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             result[0].set_public_field('value', result[1].get_public_field('value'))
         else:
             raise ValueError(f"Variable {var_name} has not been assigned before.")
-
     def evaluate_expression(self, operands):
         return operands
-
-    # def var_decl(self, node):
-    #     result = []
-    #     var_type = node.children[0].data # append 1st child which is decl type
-    #     var_name = node.children[1] # append 2st child which is decl name
-    #     if var_type != "object":
-    #         self.values[var_name] = my_Object({}, types=["object", var_type])
-    #     else:
-    #         self.values[var_name] = my_Object({}, types=["object"])
-    #     return self.values[var_name]
 
     def var_decl(self, node):
         var_type = node.children[0].data  # First child is the declaration type
@@ -150,8 +151,11 @@ class Context(Interpreter, ContextCore, ContextFunctions):
     def simpleexpression(self, node):
         var_assign = ''
         var_object = ''
+        print(self.values)
+
         for child in node.children:
             if isinstance(child, Tree):
+                print("2")
                 if child.data == "methodcall":
                     result = self.visit(child)
                 else:
@@ -180,7 +184,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                             result = self.values[var_name]
                             if isinstance(self.values[var_name], list):
                                 if "function" in self.values[var_name]:
-                                    print("fun", self.values[var_name])
                                     return var_name
                             return result
             else:
@@ -190,12 +193,15 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 elif child.count('.') == 1 and child.replace('.', '', 1).isdigit():
                     result_value = float(child)
                     result = Object({"value": result_value}, types=["object", "float"])
+                elif isinstance(child, str):
+                    result_value = child.value.strip("'\"")
+                    result = Object({"value": result_value}, types=["object", "string"])
                 else:
                     result = self.visit(child)
             return result
 
     def assignable(self, node):
-        if len(node.children) > 1 :
+        if len(node.children) > 1:
             result = self.visit(node.children[0])
             var_name = helpers.search_by_value(self.values, result)
             sub_object = Object(types=["object"])
@@ -244,7 +250,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         method_name = result
         newContext = Context(self)
         param_list_types = []
-
         for param in param_list:
             if param in self.values:
                 param_type = self.values[param].types[1]
@@ -300,7 +305,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         method_params = self.visit(node.children[1])
         method_body = node.children[2]
         self.types[method_name] = ["object", method_name]
-
         param_types = [sublist[0] for sublist in method_params]
         method_obj = Object(
             {"param_types": param_types, "params": method_params, "body": method_body},
@@ -336,10 +340,21 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         while self.visit(node.children[0]).value == 1:
             self.visit(node.children[1])
 
+    def for_statement(self, node):
+        listName = node.children[0].value
+        list = self.values[listName]
+        if 'list' in list.types:
+            for key in list.public_fields:
+                self.values["key"] = Object({"value": key}, types=["object", "int"])
+                result = self.visit(node.children[1])
+
+        else:
+            raise ValueError("not a list")
+
     def extract_info(self, tree):
-        if not isinstance(tree.children[1], Tree):
-            data_type = tree.children[0].data
-            name = tree.children[1].value
+        if len(tree.children) <= 1:
+            data_type = tree.children[0].children[0].data
+            name = tree.children[0].children[1].value
             yield data_type, name
         else:
             for child in tree.children:
@@ -357,13 +372,91 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         param_result = []
         if node.children:
             for child in node.children:
-                for var_type, var_name in self.extract_info(child):
-                    if [var_type, var_name] not in param_result:
-                        param_result.append([var_type, var_name])
+                if isinstance(child, Tree) and child.children[0].data == "derived":  # param is method type. Only for derived since it works only for the methods
+                    # for subchild in child.children:
+                    var_type = child.children[0].children[0].value  # get method type
+                    var_name = child.children[1].value  # get name
+                    param_result.append([var_type, var_name])
+                else:  # param is float etc
+                    for var_type, var_name in self.extract_info(child):
+                        if [var_type, var_name] not in param_result:
+                            param_result.append([var_type, var_name])
+
         return param_result
 
+    def listdecl(self,items):
+        keyType_init = items.children[0].data
+        if items.children[1].data == "derived":
+            objType_init = items.children[1].children[0].value
+        else:
+            objType_init = items.children[1].data
+        map_Name = items.children[2].value
+        keyType = items.children[3].data
+
+        if items.children[4].data == "derived":
+            objType = items.children[4].children[0].value
+        else:
+            objType = items.children[4].data
+
+        if keyType_init != keyType and objType_init != objType:
+            raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
+
+        result = Object( types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
+        self.values[map_Name] = result
+        return result
+
+    def listadd(self,items):
+        listName = items.children[0].value
+        result = []
+        for child in items.children[1:]:
+            result.append(self.visit(child))
+        if result[0].value in self.values[listName].public_fields:
+            print("Key already exists")
+        else:
+            listObjType = self.values[listName].objType
+            if not any(item_type in result[1].types for item_type in listObjType):
+                raise Exception("invalid datatypes")
+            else:
+                self.values[listName].add_public_field(result[0].value, result[1])
+
+    def listget(self,items):
+        listName = items.children[0].value
+        value_result = self.visit(items.children[1])
+        listKey = value_result.get_public_field("value")
+        if listName not in self.values:
+            raise ValueError("List not init")
+        test = self.values[listName].get_public_field(1)
+        list = self.values[listName]
+        if 'list' in list.types:
+            for key in list.public_fields:
+                if str(key) == str(listKey) :
+                    return self.values[listName].get_public_field(key)[0]
+                else:
+                    continue
+        else:
+            raise ValueError("not a list")
+
     def paramdecl(self, items):
+        print("===============param decl", items)
         return items
+
+    def add(self, node):
+        return ContextFunctions.add(self, node)
+
+    def sub(self, node):
+        return ContextFunctions.sub(self, node)
+
+    def mul(self, node):
+        return ContextFunctions.mul(self, node)
+
+    def div(self, node):
+        return ContextFunctions.div(self, node)
+
+    def pow(self, node):
+        return ContextFunctions.power(self, node)
+
+    def smaller_than(self, node):
+        return ContextFunctions.smaller_than(self, node)
 
     def derived(self, node):
         derived_name = node.children[0]
