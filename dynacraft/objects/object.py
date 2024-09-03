@@ -111,7 +111,10 @@ class Object:
             raise AttributeError(f"{name} not found in public, private fields, or initial fields")
 
     def __str__(self):
-        return f"This is an object with types {self.types}, public fields {self.public_fields}, private fields {self.private_fields}, keyType {self.keyType}, objType {self.objType}"
+        return f"Object with types {self.types}, public fields {self.public_fields}, private fields {self.private_fields}, keyType {self.keyType}, objType {self.objType}"
+
+    def __repr__(self):
+        return f"Object with types {self.types}, public fields {self.public_fields}, private fields {self.private_fields}, keyType {self.keyType}, objType {self.objType}"
 
 
 class BoolObject(Object):
