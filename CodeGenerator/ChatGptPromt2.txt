@@ -25,6 +25,6 @@ def developer(int id, float salary, int projects){
 manager john = manager(1, base_salary, 15000.0);
 developer jane = developer(2, base_salary + 20000.0, 5);
 
-print(john.bonus);   // result = 15000.0
-print(jane.projects); // result = 5
+#print(john.bonus);   // result = 15000.0
+#print(jane.projects); // result = 5
 

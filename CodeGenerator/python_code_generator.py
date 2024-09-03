@@ -91,9 +91,9 @@ def main():
                 else:
                     invalid_snippets.append(snippet)
             except concurrent.futures.TimeoutError:
-                print("A snippet generation task timed out.")
+                #print("A snippet generation task timed out.")
             except Exception as e:
-                print(f"An error occurred: {e}")
+                #print(f"An error occurred: {e}")
 
     # Append valid snippets to file
     with open('valid_snippets_test.txt', 'a') as valid_file:

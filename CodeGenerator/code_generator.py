@@ -85,13 +85,13 @@ def init_object(exclude_obj = "fun_10"):
     result = f"object {obj_name} = object(); "
     return result, obj_name
 
-    # #print("The used funs are", used_functions)
+    # ##print("The used funs are", used_functions)
     # if not used_functions:
     #     return '', ''
     # filtered_functions = [func for func in used_functions if func != exclude_obj]
     # obj_name = random.choice(variables)
-    # #print("The exc obj is ", exclude_obj)
-    # #print("The filtered_functions  are", filtered_functions)
+    # ##print("The exc obj is ", exclude_obj)
+    # ##print("The filtered_functions  are", filtered_functions)
     # if not filtered_functions:
     #     result = f"object {obj_name} = object(); "
     #     return result, obj_name
@@ -166,8 +166,8 @@ def generate_method_random_expression( local_free_variables, local_used_variable
         # Choose to add either a variable or a float
         if random.choice([True, False]):
             temp_term = str(random.choice(local_used_variables))
-            #print("1",temp_term)
-            #print("2",variable_called)
+            ##print("1",temp_term)
+            ##print("2",variable_called)
             if temp_term ==  variable_called:
                 continue
             term = temp_term
@@ -233,7 +233,7 @@ def generate_method_body(fun_name = "fun6"):
     #     return method_lines
 
 def generate_method():
-    #print(f"in method print funs are {free_functions}")
+    ##print(f"in method print funs are {free_functions}")
     method_name = random.choice(free_functions)
     used_functions.append(method_name)
     free_functions.remove(method_name)
@@ -321,27 +321,27 @@ def method_switch_case(value, used_objects, exlude_function = "fun_10", local_fr
 #     return code_lines
 
 # for i in range(81, 91):
-#     print("-----")
+#     #print("-----")
 #     for _ in range(10):
 #         random_int = random.randint(1, 5)
-#         # print("Random Integer:", random_int)
+#         # #print("Random Integer:", random_int)
 #
 #         result = generic_switch_case(random_int)
-#         print(result)
+#         #print(result)
 
 num_snippets = 200000
 with tqdm(total=num_snippets, desc="Generating snippets") as pbar:
     for i in range(0, num_snippets):
         free_variables = variables[:]
         free_functions = fun_names[:]
-        # print(f"The free funs are {free_functions}")
+        # #print(f"The free funs are {free_functions}")
         used_variables = []
         used_functions = ["object"]
         final_lines = ""
-        # print("-----")
+        # #print("-----")
         for _ in range(5):
             random_int = random.randint(1, 5)
-            # print("Random Integer:", random_int)
+            # #print("Random Integer:", random_int)
 
             result = generic_switch_case(random_int)
 
@@ -350,32 +350,32 @@ with tqdm(total=num_snippets, desc="Generating snippets") as pbar:
             #     parse_tree, test = interpret(input_str)
             #     logger.info(result)
             #     logger.info("\n-----")
-            #     print(1)  # Print 1 on successful execution
+            #     #print(1)  # Print 1 on successful execution
             # except Exception as e:
-            #     #print(f"An error occurred: {e}")
-            #     print(0)  # Print 0 on exception
-            # print(result)
+            #     ##print(f"An error occurred: {e}")
+            #     #print(0)  # Print 0 on exception
+            # #print(result)
 
             final_lines += result
-        # print("NOW !!!!")
-        print(final_lines)
+        # #print("NOW !!!!")
+        #print(final_lines)
         try:
 
             input_str = (final_lines)
             parse_tree, test = interpret(input_str)
             logger.info(final_lines)
             logger.info("\n-----")
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")  # Print 1 on successful execution
+            #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")  # Print 1 on successful execution
         except Exception as e:
-            # print(f"An error occurred: {e}")
-            # print(0)  # Print 0 on exception
+            # #print(f"An error occurred: {e}")
+            # #print(0)  # Print 0 on exception
             logger.info("No usefull data")
             with open('invalid_dc_test.txt', 'a') as invalid_file:
                 invalid_file.write(final_lines)
                 invalid_file.write("\n-----\n")
         pbar.update(1)
         #continue
-#print(f"{code_lines}\n")
+##print(f"{code_lines}\n")
 
 
 # num_snippets = 10000  # Adjust the number of snippets as needed

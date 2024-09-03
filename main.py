@@ -16,8 +16,7 @@ if __name__ == "__main__":
     # """)
 
     input_str = (""" 
-                    string a = "hello21";
-                    print(a);
-                    """)
+        print("test");
+     """)
 
     interpret(input_str)

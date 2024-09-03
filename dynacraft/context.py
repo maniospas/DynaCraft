@@ -1,7 +1,7 @@
 from lark import Lark, Tree, Token
 from lark.visitors import Interpreter
 from myLogger import print_info
-from dynacraft.support.builtins import Functions
+from dynacraft.support import builtins
 from dynacraft.support.arithmetic import ContextFunctions
 from dynacraft.support.core import ContextCore
 from dynacraft.objects.object import Object
@@ -151,11 +151,11 @@ class Context(Interpreter, ContextCore, ContextFunctions):
     def simpleexpression(self, node):
         var_assign = ''
         var_object = ''
-        print(self.values)
+        #print(self.values)
 
         for child in node.children:
             if isinstance(child, Tree):
-                print("2")
+                ##print("2")
                 if child.data == "methodcall":
                     result = self.visit(child)
                 else:
@@ -175,7 +175,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                             obj = self.values[var_assign]
                             sub_obj = obj.get_initial_field(sub_child.value)
                             return sub_obj
-                        elif hasattr(Functions, sub_child):
+                        elif hasattr(builtins, sub_child):
                             self.temp_funs = sub_child
                             result = Object()
                             return result
@@ -227,24 +227,22 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         if isinstance(result, Object) and result.is_empty():
             if len(node.children) > 1:
                 obj = self.values[node.children[1].value]
-                function_obj = Functions()
                 method_name = self.temp_funs.value
                 if method_name:
-                    method_to_call = getattr(function_obj, method_name, None)
+                    method_to_call = getattr(builtins, method_name, None)
                     if method_to_call:
                         method_to_call(obj)
                     else:
-                        print(f"Method '{method_name}' does not exist in Function")
+                        raise Exception(f"Method '{method_name}' does not exist in Function")
                 return Object()
             else:
-                function_obj = Functions()
                 method_name = self.temp_funs.value
                 if method_name:
-                    method_to_call = getattr(function_obj, method_name, None)
+                    method_to_call = getattr(builtins, method_name, None)
                     if method_to_call:
                         return method_to_call()
                     else:
-                        print(f"Method '{method_name}' does not exist in Function")
+                        raise Exception(f"Method '{method_name}' does not exist in Function")
                 return Object()
 
         method_name = result
@@ -411,7 +409,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         for child in items.children[1:]:
             result.append(self.visit(child))
         if result[0].value in self.values[listName].public_fields:
-            print("Key already exists")
+            raise Exception("Key already exists")
         else:
             listObjType = self.values[listName].objType
             if not any(item_type in result[1].types for item_type in listObjType):
@@ -437,7 +435,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             raise ValueError("not a list")
 
     def paramdecl(self, items):
-        print("===============param decl", items)
+        #print("===============param decl", items)
         return items
 
     def add(self, node):

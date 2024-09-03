@@ -1,17 +1,16 @@
 from dynacraft.objects.object import Object
 
 
-class Functions:
-    def object(self):
-        return Object({}, types=["object"])
+def object():
+    return Object({}, types=["object"])
 
-    def print(obj, additional_arg=None):
-        if additional_arg is not None:
-            print("Data:", additional_arg)
-            # print("MyLanguageObject:")
-            # print("Types:", obj.types)
-            # print("All Fields:", obj.get_all_fields())
-            # print("Public Fields:", obj.get_public_set())
-            # print("Private Fields:", obj.get_private_set())
+
+sysprint = print
+def print(obj = None):
+    if obj is not None:
+        if "string" in obj.types:
+            sysprint(obj.fields["value"])
         else:
-            print("No Data")
+            sysprint("Non-string object:", obj)
+    else:
+        sysprint("")

@@ -49,7 +49,7 @@ def extract_and_filter_logs(input_file, output_file):
         with open(output_file, 'w') as file:
             file.write('\n'.join(cleaned_data))
 
-    print(f"Filtered logs saved to {output_file}")
+    #print(f"Filtered logs saved to {output_file}")
 
 # Specify the input log file and output text file
 input_file = 'py_test.txt'

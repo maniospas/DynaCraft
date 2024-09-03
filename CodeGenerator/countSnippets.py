@@ -10,5 +10,5 @@ if __name__ == "__main__":
     valid_snippets_count = count_snippets('valid_dc_test.txt')
     invalid_snippets_count = count_snippets('invalid_dc_test.txt')
 
-    print(f"Number of valid snippets: {valid_snippets_count}")
-    print(f"Number of invalid snippets: {invalid_snippets_count}")
+    #print(f"Number of valid snippets: {valid_snippets_count}")
+    #print(f"Number of invalid snippets: {invalid_snippets_count}")

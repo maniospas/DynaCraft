@@ -17,7 +17,7 @@ def write_snippets(file_path, snippets):
 def delete_snippets(file_path, num_to_delete):
     snippets = read_snippets(file_path)
     if num_to_delete > len(snippets):
-        print(f"Number to delete ({num_to_delete}) is greater than the number of snippets ({len(snippets)}).")
+        #print(f"Number to delete ({num_to_delete}) is greater than the number of snippets ({len(snippets)}).")
         return
     snippets_to_keep = random.sample(snippets, len(snippets) - num_to_delete)
     write_snippets(file_path, snippets_to_keep)
@@ -28,4 +28,4 @@ if __name__ == "__main__":
     #delete_snippets('valid_snippets.txt', num_to_delete)
     delete_snippets('invalid_dc_test.txt', num_to_delete)
 
-    print(f"Deleted {num_to_delete} snippets from each file.")
+    #print(f"Deleted {num_to_delete} snippets from each file.")
