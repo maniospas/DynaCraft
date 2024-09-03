@@ -11,12 +11,30 @@ def interpret(code):
 
 if __name__ == "__main__":
     # input_str = ("""
-    #     string x = 'Helloworld';
+    #     def print(float x) {
+    #         string message = "hello21";
+    #         print(message);
+    #     }
+    #     float a = 1.0;
+    #     print(a);
+    #  """)
+    #
+    # input_str = ("""
+    #     print("hello world!");
+    #  """)
+    #
+    #
+    # input_str = ("""
+    #     int x = 1+2;
     #     print(x);
-    # """)
+    #  """)
+    #
 
-    input_str = (""" 
-        print("test");
+
+    input_str = ("""
+        int x = 1;
+        string y = tostring(x);
+        print(y);
      """)
 
     interpret(input_str)
