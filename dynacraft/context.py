@@ -77,19 +77,14 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             #print_info(f"The saved item: {self.values[var_name]}")
             return self.values[var_name]
         else:
-            print("we go into  woth node", node.children[1:])
             for child in node.children[1:]:
-                print("lets check the assignment child", child)
-                print("child result", self.visit(child))
                 result.append(self.visit(child))
             res = helpers.Is_list_or_object(result[2], 0)
-            print("########################else ", result[1].fields)
             if 'value' in result[1].fields:
                 var_name = result[1].get_public_field("value")
                 var_type = result[0].data
                 if var_type in result[2].types:
                     self.values[var_name] = result[2]
-                    #print_info(f"The saved item: {self.values[var_name]}")
                     return self.values[var_name]
                 else:
                     raise ValueError("Invalid type")
@@ -155,19 +150,13 @@ class Context(Interpreter, ContextCore, ContextFunctions):
     def simpleexpression(self, node):
         var_assign = ''
         var_object = ''
-        print("finally into simple expr", node)
-
         for child in node.children:
             if isinstance(child, Tree):
-                #print("2")
                 if child.data == "methodcall":
-                    print("2")
                     result = self.visit(child)
                 else:
-                    print("3")
                     for sub_child in child.children:
                         if isinstance(sub_child, Tree):
-                            print("4")
                             if sub_child.children[0].data == "methodcall":
                                 result = self.visit(sub_child.children[0])
                                 var_object = result
@@ -175,7 +164,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                                 var_assign = (sub_child.children[0].children[0].value)
                                 continue
                         elif var_object != '':
-                            print("5")
                             sub_obj = var_object.get_public_field(sub_child.value)
                             return sub_obj
                         elif var_assign != '':
@@ -184,14 +172,10 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                             sub_obj = obj.get_initial_field(sub_child.value)
                             return sub_obj
                         elif hasattr(builtins, sub_child):
-                            print("6", sub_child)
-                            print("_____________________________________________lest find all the functions", self.values.keys())
                             if sub_child in self.values.keys():
-                                print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$The function is ovberwritten")
                                 return sub_child
                             self.temp_funs = sub_child
                             result = Object()
-                            print("printing the buildin result", object)
                             return result
                         else:
                             var_name = sub_child.value
@@ -232,18 +216,13 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             return result
 
     def methodcall(self, node):
-        print("lets check the methodcall", node)
         if len(node.children) > 1:
-            print("len > 1", node.children[1:])
             param_list = node.children[1:]
         else:
-            print("len < 1")
             param_list = []
 
         result = self.visit(node.children[0])
-        print("here the res is", result)
         if isinstance(result, Object) and result.is_empty():
-            print("-----==================================Into if")
             if len(node.children) > 1:
                 try:
                     obj = self.values[node.children[1].value]
@@ -265,14 +244,12 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                         retObj = method_to_call(obj)
                     else:
                         raise Exception(f"Method '{method_name}' does not exist in Function")
-                print("the temp obj", retObj)
                 if retObj is not None:
                     return retObj
                 else:
                     return Object()
             else:
                 method_name = self.temp_funs.value
-                print("!!!!!!!!!!!!!!Into else", method_name)
                 if method_name:
                     method_to_call = getattr(builtins, method_name, None)
                     if method_to_call:
@@ -280,9 +257,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     else:
                         raise Exception(f"Method '{method_name}' does not exist in Function")
                 return Object()
-        print("#$$$$$$$$$$$$OUT OF IFS")
         method_name = result
-        print("#$$$$$$$$$$$$OUT OF IFS", result)
         newContext = Context(self)
         param_list_types = []
         for param in param_list:
@@ -295,14 +270,10 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             param_list_types.append(param_type)
 
         for item in self.values[method_name][1:]:
-            print("THE ITEM IS ", item)
             flat_list = [inner[0] for inner in item.fields["params"]]
-            print("THE flat_list is ", flat_list)
-            print("THE param_list_types are ", param_list_types)
             if flat_list == param_list_types:
                 method = item
 
-        print("lets check the method here", method)
         for value in self.values:
             newContext.values[value] = []
             if isinstance(self.values[value], Object):
@@ -317,7 +288,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     obj.fields = sub_item.fields
                     obj.types = sub_item.types
                     newContext.values[value].append(obj)
-        print("the method is", method)
         if method.fields["params"]:
             for index, param in enumerate(method.params):
                 if param_list[index] in self.values:
@@ -337,7 +307,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         for key, value in list(newContext.values.items())[2:]:
             obj_result.set_public_field(key, value)
         result.types.append(method_name)
-        print("^^^^^THE METHODCALL RESULT IS", result)
         return result
 
     def method_decl(self, node):
