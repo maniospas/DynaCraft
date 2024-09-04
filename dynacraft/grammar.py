@@ -53,7 +53,7 @@ listdecl: "map" "[" vartype "," vartype "]" NAME "=" "map" "[" vartype "," varty
 
 listadd : NAME  "[" simpleexpression "]" "=" simpleexpression
 
-listget : "find" "(" NAME "[" simpleexpression "]" ")"
+listget : NAME "[" simpleexpression "]" 
 
 param_list : paramdecl("," paramdecl)*
 
@@ -75,7 +75,7 @@ codeblock : "{}"
 
 method : methodcall  | blockexec 
 
-methodcall : simpleexpression "(" (NAME | NUMBER | methodcall)? ("," (NAME | NUMBER | methodcall))* ")"
+methodcall :  simpleexpression "(" (STRING| NAME | NUMBER | methodcall)? ("," (STRING | NAME | NUMBER | methodcall))* ")"
 
 
 blockexec : "<"NAME">"
