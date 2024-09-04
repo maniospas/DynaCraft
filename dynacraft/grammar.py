@@ -49,11 +49,11 @@ methodparams : "(" ")"
 
 vardecl: vartype NAME  -> var_decl
 
-listdecl: "map" "[" vartype "," vartype "]" NAME "=" "map" "[" vartype "," vartype "]" "(" ")"
+listdecl: "map" "[" vartype "," vartype "]" assignable "=" "map" "[" vartype "," vartype "]" "(" ")"
 
-listadd : NAME  "[" simpleexpression "]" "=" simpleexpression
+listadd : assignable  "[" simpleexpression "]" "=" simpleexpression
 
-listget : NAME "[" simpleexpression "]" 
+listget : assignable "[" simpleexpression "]" 
 
 param_list : paramdecl("," paramdecl)*
 

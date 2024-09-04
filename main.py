@@ -22,11 +22,6 @@ if __name__ == "__main__":
     input_str = ("""
         print("B4T");
      """)
-    # input_str = ("""
-    #         def sum(){object o = object(); float o.a = 2.0; return o;}
-    #         sum a = sum();
-    #         float y = a.a;
-    #      """)
     #
     #
     input_str = ("""
@@ -34,27 +29,27 @@ if __name__ == "__main__":
         print(x);
      """)
     #
-    # input_str = ("""
-    #         string x = "HELLO WORLD";
-    #         print(x);
-    #      """)
+    input_str = ("""
+            string x = "HELLO WORLD";
+            print(x);
+         """)
     #
     #
-    # input_str = ("""
-    #     int x = 1;
-    #     string y = tostring(x);
-    #     print(y);
-    #  """)
+    input_str = ("""
+        int x = 1;
+        string y = tostring(x);
+        print(y);
+     """)
     #
-    # input_str = ("""
-    #     def adder(float x, float y) {
-    #         object result = object();
-    #         float result.sum = x+y;
-    #         return result;
-    #     }
-    #     adder result = adder(1, 2.0);
-    #     print(result);
-    # """)
+    input_str = ("""
+        def adder(float x, float y) {
+            object result = object();
+            float result.sum = x+y;
+            return result;
+        }
+        adder result = adder(1, 2.0);
+        print(result);
+    """)
 
     # input_str = ("""
     #     map[int, map[int, float]] test = map[int, map[int, float]]();
@@ -66,19 +61,25 @@ if __name__ == "__main__":
     # ADD COMMENTS
 
     # NAME [ NAME ] = EXPR  -> set list item
-    # input_str = ("""
-    #         object x = object();
-    #         map[int, float] x.test = map[int, float]();
-    #         x.test["A"] = 1.0;
-    #         float result = x.test["A"];
-    #         print(result);
-    #     """)
+
+    input_str = ("""
+            object x = object();
+            map[int, float] x.test = map[int, float]();
+            x.test["A"] = 1.0;
+            float result = x.test["A"];
+            print(result);
+        """)
+    #
+    input_str = ("""
+                object x = object();
+                map[int, float] test = map[int, float]();
+                test["A"] = 1.0;
+                float result = test["A"];
+                print(result);
+            """)
 
     # input_str = ("""
-    #         map[int, float] test = map[int, float]();
-    #         test["A"] = 1.0;
-    #         float result = test["A"];
-    #         print(result);
-    #     """)
+    #             map[int, float] test = map[int, float]();
+    #         """)
 
     interpret(input_str)

@@ -25,6 +25,9 @@ class Object:
     def get_private_field(self, key):
         return self.private_fields.get(key, None)
 
+    def get_public_field(self, key):
+        return self.public_fields.get(key, None)
+
     def get_private_set(self):
         return self.private_fields
 

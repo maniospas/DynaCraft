@@ -394,56 +394,164 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         return param_result
 
     def listdecl(self,items):
-        keyType_init = items.children[0].data
-        if items.children[1].data == "derived":
-            objType_init = items.children[1].children[0].value
+        if len(items.children[2].children) < 2:
+            # print("INTO SHORT")
+            # print("list delc", items)
+            # print("list delc key", items.children[0].data)
+            # print("list delc if check", items.children[1].data)
+            # print("items?", items.children[1].data)
+            # print("map name?", items.children[2].children[0].value)
+            # print("key type?", items.children[3].data)
+            keyType_init = items.children[0].data
+            if items.children[1].data == "derived":
+                objType_init = items.children[1].children[0].value
+            else:
+                objType_init = items.children[1].data
+            map_Name = items.children[2].children[0].value
+            keyType = items.children[3].data
+
+            if items.children[4].data == "derived":
+                objType = items.children[4].children[0].value
+            else:
+                objType = items.children[4].data
+
+            if keyType_init != keyType and objType_init != objType:
+                raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
+
+            result = Object( types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
+            self.values[map_Name] = result
+            return result
         else:
-            objType_init = items.children[1].data
-        map_Name = items.children[2].value
-        keyType = items.children[3].data
 
-        if items.children[4].data == "derived":
-            objType = items.children[4].children[0].value
-        else:
-            objType = items.children[4].data
+            object_name = items.children[2].children[0].children[0].children[0].value
+            if object_name in self.values:
+                keyType_init = items.children[0].data
+                if items.children[1].data == "derived":
+                    objType_init = items.children[1].children[0].value
+                else:
+                    objType_init = items.children[1].data
+                map_Name = items.children[2].children[1].value
+                keyType = items.children[3].data
 
-        if keyType_init != keyType and objType_init != objType:
-            raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
+                if items.children[4].data == "derived":
+                    objType = items.children[4].children[0].value
+                else:
+                    objType = items.children[4].data
 
-        result = Object( types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
-        self.values[map_Name] = result
-        return result
+                if keyType_init != keyType and objType_init != objType:
+                    raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
+
+                result = Object(types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
+                self.values[map_Name] = result
+                self.values[object_name].set_public_field(map_Name, result)
+                return result
+            else:
+                raise Exception("Object not found")
+
+    # def listdecl(self,items):
+    #     print("list delc", items)
+    #     print("list delc key", items.children[0].data)
+    #     print("list delc if check", items.children[1].data)
+    #     print("items?", items.children[1].data)
+    #     print("map name?", items.children[2].value)
+    #     print("key type?", items.children[3].data)
+    #     keyType_init = items.children[0].data
+    #     if items.children[1].data == "derived":
+    #         objType_init = items.children[1].children[0].value
+    #     else:
+    #         objType_init = items.children[1].data
+    #     map_Name = items.children[2].value
+    #     keyType = items.children[3].data
+    #
+    #     if items.children[4].data == "derived":
+    #         objType = items.children[4].children[0].value
+    #     else:
+    #         objType = items.children[4].data
+    #
+    #     if keyType_init != keyType and objType_init != objType:
+    #         raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
+    #
+    #     result = Object( types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
+    #     self.values[map_Name] = result
+    #     print("the return result is", result)
+    #     return result
 
     def listadd(self,items):
-        listName = items.children[0].value
-        result = []
-        for child in items.children[1:]:
-            result.append(self.visit(child))
-        if result[0].value in self.values[listName].public_fields:
-            raise Exception("Key already exists")
-        else:
-            listObjType = self.values[listName].objType
-            if not any(item_type in result[1].types for item_type in listObjType):
-                raise Exception("invalid datatypes")
+        #print("into list add", items)
+        #print("listName len", len(items.children[0].children))
+        #print("listName len", items.children[0].children[1].value)
+        #print("list items", items.children[1])
+        if len(items.children[0].children) < 2 :
+
+            listName = items.children[0].children[0].value
+            result = []
+            for child in items.children[1:]:
+                result.append(self.visit(child))
+            if result[0].value in self.values[listName].public_fields:
+                raise Exception("Key already exists")
             else:
-                self.values[listName].add_public_field(result[0].value, result[1])
+                listObjType = self.values[listName].objType
+                if not any(item_type in result[1].types for item_type in listObjType):
+                    raise Exception("invalid datatypes")
+                else:
+                    self.values[listName].add_public_field(result[0].value, result[1])
+        else :
+            object_name = items.children[0].children[0].children[0].children[0].value
+            map_Name = items.children[0].children[1].value
+            result = []
+            for child in items.children[1:]:
+                result.append(self.visit(child))
+            if result[0].value in self.values[object_name].get_public_field(map_Name).public_fields:
+                raise Exception("Key already exists")
+            else:
+                listObjType = self.values[object_name].get_public_field(map_Name).objType
+                if not any(item_type in result[1].types for item_type in listObjType):
+                    raise Exception("invalid datatypes")
+                else:
+                    self.values[object_name].get_public_field(map_Name).add_public_field(result[0].value, result[1])
+
 
     def listget(self,items):
-        listName = items.children[0].value
-        value_result = self.visit(items.children[1])
-        listKey = value_result.get_public_field("value")
-        if listName not in self.values:
-            raise ValueError("List not init")
-        test = self.values[listName].get_public_field(1)
-        list = self.values[listName]
-        if 'list' in list.types:
-            for key in list.public_fields:
-                if str(key) == str(listKey) :
-                    return self.values[listName].get_public_field(key)[0]
-                else:
-                    continue
-        else:
-            raise ValueError("not a list")
+        if len(items.children[0].children) < 2 :
+            listName = items.children[0].children[0].value
+            value_result = self.visit(items.children[1])
+            listKey = value_result.get_public_field("value")
+            if listName not in self.values:
+                raise ValueError("List not init")
+            test = self.values[listName].get_public_field(1)
+            list = self.values[listName]
+            if 'list' in list.types:
+                for key in list.public_fields:
+                    if str(key) == str(listKey) :
+                        return self.values[listName].get_public_field(key)[0]
+                    else:
+                        continue
+            else:
+                raise ValueError("not a list")
+        else :
+            object_name = items.children[0].children[0].children[0].children[0].value
+            map_Name = items.children[0].children[1].value
+            value_result = self.visit(items.children[1])
+            listKey = value_result.get_public_field("value")
+            if object_name not in self.values:
+                raise ValueError("Object not found")
+            try:
+                if self.values[object_name].get_public_field(map_Name):
+
+                    test = self.values[object_name].get_public_field(map_Name).get_public_field(1)
+                    list = self.values[object_name].get_public_field(map_Name)
+                    if 'list' in list.types:
+                        for key in list.public_fields:
+                            if str(key) == str(listKey):
+                                return self.values[object_name].get_public_field(map_Name).get_public_field(key)[0]
+                            else:
+                                continue
+                    else:
+                        raise ValueError("not a list")
+            except:
+                raise Exception("list not found")
+
+
 
     def paramdecl(self, items):
         #print("===============param decl", items)
