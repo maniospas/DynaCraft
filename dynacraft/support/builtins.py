@@ -7,7 +7,7 @@ def object():
 
 sysprint = print
 def print(obj = None):
-    sysprint("the obj is", obj)
+    #sysprint("the obj is", obj)
     if obj is not None:
         if "string" in obj.types or "float" in obj.types or "int" in obj.types or "bool" in obj.types:
             sysprint(obj.fields["value"])

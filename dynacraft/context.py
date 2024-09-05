@@ -276,22 +276,22 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         param_list_types = []
         for param in param_list:
             if param in self.values:
-                param_type = self.values[param].types[1]
-            else:
+                param_type = self.values[param].types
+            else:  # TODO: it is not clear what this is trying to achieve
                 param_type = param.type
                 if 'NUMBER' in param_type:
                     if param.isdigit():
                         param_type = 'float'
                     else :
                         param_type = 'float'
+                param_type = [param_type]
             param_list_types.append(param_type)
 
+        method = None
         for item in self.values[method_name][1:]:
             flat_list = [inner[0] for inner in item.fields["params"]]
-            if flat_list == param_list_types:
+            if all(any(u==v for v in param_type) for u, param_type in zip(flat_list, param_list_types)):
                 method = item
-            else:
-                method = None
 
         for value in self.values:
             newContext.values[value] = []
@@ -331,10 +331,10 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 newContext.values[param_name] = Object({"value": param_value}, types=["object", param_type])
 
         result = newContext.visit(method.body)
-        obj_result = Object(types=["object", "test"])
-        for key, value in list(newContext.values.items())[2:]:
-            obj_result.set_public_field(key, value)
-        result.types.append(method_name)
+        if hasattr(result, "types"):
+            result.types.append(method_name)
+        else:
+            result = Object(types=["object", "empty"])
         return result
 
     def method_decl(self, node):

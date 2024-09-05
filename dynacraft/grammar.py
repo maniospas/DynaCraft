@@ -110,7 +110,7 @@ comparison_operators : expression "==" expression -> equal
 
 NAME: /([a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*)/
 NUMBER : /-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?/
-STRING: /"([^"\\]|\\["\\bfnrt])*"/
+STRING: /"(([^"])|(\\["\\bfnrt]))*"/
 
 %ignore " "
 """
