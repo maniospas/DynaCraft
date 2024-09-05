@@ -22,6 +22,10 @@ class Object:
         self.private_fields[key] = value
         self._track_field(key, "private")
 
+    def get_types(self):
+        return self.types
+    def get_keyType(self):
+        return self.keyType[-1]
     def get_private_field(self, key):
         return self.private_fields.get(key, None)
 

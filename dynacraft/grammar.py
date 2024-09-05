@@ -50,10 +50,13 @@ methodparams : "(" ")"
 vardecl: vartype NAME  -> var_decl
 
 listdecl: "map" "[" vartype "," vartype "]" assignable "=" "map" "[" vartype "," vartype "]" "(" ")"
+        
 
-listadd : assignable  "[" simpleexpression "]" "=" simpleexpression
+listadd : assignable  "[" simpleexpression "]"("[" simpleexpression "]")* "=" simpleexpression
+        | assignable  "[" simpleexpression "]"("[" simpleexpression "]")* "=" "map" "[" vartype "," vartype "]"
 
-listget : assignable "[" simpleexpression "]" 
+listget : assignable "[" simpleexpression "]" ("[" simpleexpression "]")*
+
 
 param_list : paramdecl("," paramdecl)*
 
@@ -68,6 +71,7 @@ vartype : "string" -> string
         | "object" -> object
         | "var" -> var
         | NAME -> derived
+        | "map" "[" vartype "," vartype "]"
 
 codeblock : "{}"
           | "{" (semicolonstatements | listget | listadd | if_statement | while_statement)+ "}"
@@ -75,7 +79,7 @@ codeblock : "{}"
 
 method : methodcall  | blockexec 
 
-methodcall :  simpleexpression "(" (STRING| NAME | NUMBER | methodcall)? ("," (STRING | NAME | NUMBER | methodcall))* ")"
+methodcall :  simpleexpression "(" (STRING| NAME | NUMBER | methodcall | listget)? ("," (STRING | NAME | NUMBER | methodcall | listget))* ")"
 
 
 blockexec : "<"NAME">"
