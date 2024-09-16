@@ -1,3 +1,5 @@
 lark-parser
 IPython
 tqdm
+torch
+matplotlib

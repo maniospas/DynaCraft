@@ -4,12 +4,14 @@ from dynacraft.interpreter import interpret
 from experiments.generator.dynacraft_generator import DynaCraftGenerator
 
 
-def generate_data(directory="synthetic_data", snippets=2000):
+def generate_data(directory="synthetic_data", snippets=20000):
     if not os.path.exists(directory):
         os.makedirs(directory)
+    count_valid = 0
+    count_invalid = 0
     with open(f"{directory}/valid.txt", "w") as valid:
         with open(f"{directory}/invalid.txt", "w") as invalid:
-            for i in tqdm(range(0, snippets), desc="Generating snippets"):
+            for _ in tqdm(range(0, snippets), desc="Generating snippets"):
                 generator = DynaCraftGenerator();
                 generator.free_variables = generator.variables[:]
                 generator.free_functions = generator.fun_names[:]
@@ -24,8 +26,12 @@ def generate_data(directory="synthetic_data", snippets=2000):
                     input_str = (final_lines)
                     interpret(input_str)
                     file = valid
+                    count_valid += 1
                 except Exception:
                     file = invalid
+                    if count_invalid > 2*count_invalid:  # reduce file writes for invalid (speed up generation)
+                        continue
+                    count_invalid += 1
 
                 file.write(final_lines)
                 file.write("\n-----\n")
