@@ -1,0 +1,72 @@
+// Define base class Person
+def person(int age, string name) {
+    person p = person();
+    int p.age = age;
+    string p.name = name;
+    
+    ! return p;
+}
+
+// Define method get_details for Person
+def get_person_details(person p) {
+    string details = p.name + " is " + p.age + " years old.";
+    return details;
+}
+
+// Define Employee class inheriting from Person
+def employee(int age, string name, float salary) {
+    employee e = employee();
+    int e.age = age;
+    string e.name = name;
+    float e.salary = salary;
+
+    ! return e;
+}
+
+// Define method get_details for Employee
+def get_employee_details(employee e) {
+    string details = e.name + " is " + e.age + " years old and earns " + e.salary + ".";
+    return details;
+}
+
+// Define Manager class inheriting from Employee
+def manager(int age, string name, float salary, float bonus) {
+    manager m = manager();
+    int m.age = age;
+    string m.name = name;
+    float m.salary = salary;
+    float m.bonus = bonus;
+
+    ! return m;
+}
+
+// Define method get_details for Manager
+def get_manager_details(manager m) {
+    string details = m.name + " is " + m.age + " years old, earns " + m.salary + " with a bonus of " + m.bonus + ".";
+    return details;
+}
+
+// Create instances
+employee alice = employee(30, "Alice", 75000.0);
+manager bob = manager(40, "Bob", 90000.0, 15000.0);
+
+// Use method get_details to print details
+#print(get_employee_details(alice)); // Alice is 30 years old and earns 75000.0.
+#print(get_manager_details(bob)); // Bob is 40 years old, earns 90000.0 with a bonus of 15000.0.
+
+// Additional logic: Give a bonus to employees based on their salary
+if alice.salary < 80000.0: {
+    float alice.bonus = 5000.0;
+} else {
+    float alice.bonus = 2000.0;
+}
+
+#print("Alice's bonus: " + alice.bonus); // Alice's bonus: 5000.0
+
+if bob.salary > 85000.0: {
+    float bob.additional_bonus = 10000.0;
+} else {
+    float bob.additional_bonus = 3000.0;
+}
+
+#print("Bob's additional bonus: " + bob.additional_bonus); // Bob's additional bonus: 10000.0

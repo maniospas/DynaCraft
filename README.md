@@ -39,8 +39,8 @@ def vector(int x, int y){
 
 vector a = vector(3,2);
 var z = vector.x + vector.y;
-print(z); //this should be 5
-print(norm.a); //this should print 6
+#print(z); //this should be 5
+#print(norm.a); //this should print 6
 
 ```
 #Blocks as Code
@@ -51,12 +51,12 @@ If a code block is called after the key symbol & then the code inside the block 
 def addition(int x,int y){
                           int x = x + 5;
                           int y = x + 4;
-                          print(y);
+                          #print(y);
                          }
 
 
 var x = 2;
-print(x); //should print 2
+#print(x); //should print 2
 
 &addition; //should print 11
 ```
@@ -66,14 +66,14 @@ You can declare a new variable with the same name as a previous one.The second v
 
 ```c
 var x = 5;
-print(x); //5
+#print(x); //5
 
 var x = x +2;
-print(x); //7
+#print(x); //7
 
 sum {
     var x = x+3;
 }
-print(sum); //10
-print(x); //7
+#print(sum); //10
+#print(x); //7
 ```
