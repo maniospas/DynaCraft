@@ -8,7 +8,7 @@ def extract_info(node):
         if node.data == 'paramdecl':
             for child in node.children:
                 if isinstance(child, Tree):
-                    if child.data in ['float', 'int', 'string', 'object', 'var']:
+                    if child.data in ['float', 'int', 'string', 'object', 'var', 'bool']:
                         var_type = child.data
                         var_name = child.children[0]
                         yield var_type, var_name

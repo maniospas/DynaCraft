@@ -2,7 +2,7 @@ from dynacraft.objects.object import Object
 
 
 def object():
-    return Object({}, types=["object"])
+    return Object({}, types=["object"], original_types = [])
 
 
 sysprint = print
@@ -10,7 +10,7 @@ def print(obj = None):
     #sysprint("the obj is", obj)
     if obj is not None:
         if "string" in obj.types or "float" in obj.types or "int" in obj.types or "bool" in obj.types:
-            sysprint(obj.fields["value"])
+            sysprint(obj.public_fields["value"])
         else:
             sysprint("Non-builtin object:", obj)
     else:
