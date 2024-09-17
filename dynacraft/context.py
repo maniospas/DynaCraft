@@ -67,6 +67,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         result = []
         result.append(node.children[0])
         if result[0].data == "derived":
+            var_type = self.visit(result[0])[-1] #get cast type
             temp = node.children[1]
             var_name = temp.children[0].value
             der_result = self.visit(result[0])
@@ -74,7 +75,19 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 result.append(self.visit(child))
             res = helpers.Is_list_or_object(result[2], 1)
             self.values[var_name] = res
-            #print_info(f"The saved item: {self.values[var_name]}")
+            if var_type == res.get_types()[-1]:
+                pass #no downcast so no further changes
+            elif var_type in res.get_types(): #downcast
+                types = res.get_types()
+                updated_types = types[:types.index(var_type) + 1]
+                res.update_types(updated_types)
+                added_fields_list = res.get_added_fields()
+
+                fields_downcasted = [key for key, value in added_fields_list.items() if value != updated_types]
+                for field in fields_downcasted:
+                    res.make_field_private(field)
+                res.original_types = types
+
             return self.values[var_name]
         else:
             for child in node.children[1:]:
@@ -112,7 +125,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 self.default_flag = False
             result.append(self.visit(child))
         self.default_flag = False
-
         var_name = result[0].get_public_field('value')
         var_value = result[1].get_public_field('value')
         if var_name in self.values:
@@ -169,7 +181,9 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                         elif var_assign != '':
                             value_list = self.values[var_assign].fields
                             obj = self.values[var_assign]
-                            sub_obj = obj.get_initial_field(sub_child.value)
+                            sub_obj = obj.get_public_field(sub_child.value)
+                            if sub_obj is None:
+                                return Object() #subObject doesnt exist, for ecxample it may be private
                             return sub_obj
                         elif hasattr(builtins, sub_child):
                             # if sub_child in self.values.keys():
@@ -178,7 +192,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                                 return sub_child
                             self.temp_funs = sub_child
                             result = Object()
-                            return result
+                            return sub_child
                         else:
                             var_name = sub_child.value
                             result = self.values[var_name]
@@ -193,6 +207,9 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 elif child.count('.') == 1 and child.replace('.', '', 1).isdigit():
                     result_value = float(child)
                     result = Object({"value": result_value}, types=["object", "float"])
+                elif child == "true" or child == "false":
+                    result_value = child.value
+                    result = Object({"value": result_value}, types=["object", "bool"])
                 elif isinstance(child, str):
                     result_value = child.value.strip("'\"")
                     result = Object({"value": result_value}, types=["object", "string"])
@@ -206,10 +223,14 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             var_name = helpers.search_by_value(self.values, result)
             sub_object = Object(types=["object"])
             existing_obj = self.values[var_name]
+            if not existing_obj.get_public_field(node.children[1].value):
+                existing_obj.set_added_fields(f"{node.children[1].value}", existing_obj.get_types())
+
             existing_obj.set_public_field(var_name, sub_object)
             existing_obj.set_public_field(f"{node.children[1].value}", sub_object)
             existing_obj.set_initial_field(var_name, sub_object)
             existing_obj.set_initial_field(f"{node.children[1].value}", sub_object)
+
             return sub_object
         else:
             for child in node.children:
@@ -237,9 +258,14 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                         if (float(node.children[1].value)):
                             obj = Object({"value": node.children[1].value}, types=["object", "float"])
                     except:
-                        obj = Object({"value": node.children[1].value}, types=["object", "string"])
+                        if node.children[1].value == "true" or node.children[1].value == "false":
+                            obj = Object({"value": node.children[1].value}, types=["object", "bool"])
+                        else:
+                            obj = Object({"value": node.children[1].value}, types=["object", "string"])
                 else:
                     raise Exception(f"Invalid variable '{node.children[1].value}'")
+            if not self.temp_funs:
+                return Object()
             method_name = self.temp_funs.value
             if method_name:
                 method_to_call = getattr(builtins, method_name, None)
@@ -276,22 +302,48 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         param_list_types = []
         for param in param_list:
             if param in self.values:
-                param_type = self.values[param].types
+                if not self.values[param].original_types: #no downcast so ne need for original types
+                    param_type = self.values[param].types
+                else:
+                    item = self.values[param]
+                    param_type = item.original_types
+                    #also upcast it
+                    added_fields_list = item.get_added_fields()
+
+                    fields_upcast = [key for key, value in added_fields_list.items() if value == param_type]
+                    for field in fields_upcast:  #upcast the fields that were made private but now should be public
+                        if item.get_private_field(field):
+                            item.make_field_public(field)
+
+
             else:  # TODO: it is not clear what this is trying to achieve
+                try:
+                    param_type = param.type
+                except: #no param.type when listget in function
+                    return self.methodcall_subroutine(node)
                 param_type = param.type
                 if 'NUMBER' in param_type:
                     if param.isdigit():
-                        param_type = 'float'
+                        param_type = 'int'
                     else :
                         param_type = 'float'
+                elif 'BOOLEAN' in param_type:
+                    param_type = 'bool'
+                elif 'STRING' in param_type:
+                    param_type = 'string'
                 param_type = [param_type]
             param_list_types.append(param_type)
 
         method = None
-        for item in self.values[method_name][1:]:
-            flat_list = [inner[0] for inner in item.fields["params"]]
-            if all(any(u==v for v in param_type) for u, param_type in zip(flat_list, param_list_types)):
-                method = item
+        #try-except because without it if we try to call an inbuilt method, it doesnt find it. We need to call the subroutine
+        try:
+            for item in self.values[method_name][1:]:
+                flat_list = [inner[0] for inner in item.fields["params"]]
+                if all(any(u==v for v in param_type) for u, param_type in zip(flat_list, param_list_types)):
+                #if all(u in param_type for u, param_type in zip(flat_list, param_list_types)):
+                    method = item
+        except:
+            return self.methodcall_subroutine(node)
 
         for value in self.values:
             newContext.values[value] = []
@@ -316,7 +368,9 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             for index, param in enumerate(method.params):
                 if param_list[index] in self.values:
                     try:
-                        param_value = self.values[param_list[index]].get_public_field('value')
+                        param_name = param[1]
+                        #param_value = self.values[param_list[index]].get_public_field('value')
+                        newContext.values[param_name] = self.values[param_list[index]]
                     except (IndexError, AttributeError, KeyError):
                         newContext.values[param[1]] = self.values[param_list[index]]
                         continue
@@ -324,11 +378,14 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     if param_list[index].isdigit():
                         param_value = int(param_list[index])
                     else :
-                        param_value = float(param_list[index])
+                        try:
+                            param_value = float(param_list[index])
+                        except:
+                            param_value = param_list[index].strip('"') #string "" in case of string usage without variable declaration
                     # param_value = float(param_list[index])
-                param_type = param[0]
-                param_name = param[1]
-                newContext.values[param_name] = Object({"value": param_value}, types=["object", param_type])
+                    param_type = param[0]
+                    param_name = param[1]
+                    newContext.values[param_name] = Object({"value": param_value}, types=["object", param_type])
 
         result = newContext.visit(method.body)
         if hasattr(result, "types"):
@@ -367,30 +424,55 @@ class Context(Interpreter, ContextCore, ContextFunctions):
 
     def if_statement(self, node):
         result = self.visit(node.children[0])
-        res = helpers.is_list_or_object(result, 0)
-        if res.value == 1:
+        res = helpers.Is_list_or_object(result, 0)
+        if res.value == "true":
             result = self.visit(node.children[1])
         else:
-            result = self.visit(node.children[2])
+            try:
+                result = self.visit(node.children[2])
+            except:
+                pass
 
     def while_statement(self, node):
         while self.visit(node.children[0]).value == 1:
             self.visit(node.children[1])
 
     def for_statement(self, node):
-        listName = node.children[0].value
-        list = self.values[listName]
+
+        if len(node.children[0].children) == 1: # if not sub object
+            result = self.visit(node.children[0])
+            listName = result.value
+            list = self.values[listName]
+        else:
+
+            obj_item = self.visit(node.children[0].children[0])
+
+            listName = node.children[0].children[1].value
+            list = obj_item.get_public_field(listName)
+            #list = self.values[listName]
+
         if 'list' in list.types:
             for key in list.public_fields:
                 self.values["key"] = Object({"value": key}, types=["object", "int"])
                 result = self.visit(node.children[1])
-
         else:
             raise ValueError("not a list")
+        # listName = node.children[0].value
+        # list = self.values[listName]
+        # if 'list' in list.types:
+        #     for key in list.public_fields:
+        #         self.values["key"] = Object({"value": key}, types=["object", "int"])
+        #         result = self.visit(node.children[1])
+        #
+        # else:
+        #     raise ValueError("not a list")
 
     def extract_info(self, tree):
         if len(tree.children) <= 1:
-            data_type = tree.children[0].children[0].data
+            if tree.children[0].children[0].data == "derived":
+                data_type = self.visit(tree.children[0].children[0])[-1]
+            else:
+                data_type = tree.children[0].children[0].data
             name = tree.children[0].children[1].value
             yield data_type, name
         else:
@@ -400,7 +482,10 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     name = None
                     for sub_child in child.children:
                         if isinstance(sub_child, Tree) and data_type is None:
-                            data_type = sub_child.data
+                            if sub_child.data == "derived":
+                                data_type = self.visit(sub_child)[-1]
+                            else:
+                                data_type = sub_child.data
                         elif isinstance(sub_child, Token):
                             name = sub_child.value
                     yield data_type, name
@@ -418,17 +503,8 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     for var_type, var_name in self.extract_info(child):
                         if [var_type, var_name] not in param_result:
                             param_result.append([var_type, var_name])
-
         return param_result
 
-    # def declSublist(self, items):
-    #     # print("into sublist handler", items)
-    #     # print("the key is", items.children[0].data)
-    #     # print("the type is", items.children[1].data)
-    #     key_type = items.children[0].data
-    #     obj_type = items.children[1].data
-    #     result = Object(types=["object", "list"], keyType=[key_type], objType=[obj_type])
-    #     return result
     def listdecl(self,items):
 
         if len(items.children[2].children) >= 2:
@@ -447,7 +523,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 raise Exception(f"Type mismatch expecting {items.children[1]} but got {items.children[4]}")
 
             result = Object(types=["object", "list"], keyType=[items.children[0].data],
-                            objType=[items.children[1].children])
+                            objType=[items.children[1].children], original_types=[])
 
         else:
             keyType_init = items.children[0].data
@@ -465,7 +541,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             if keyType_init != keyType and objType_init != objType:
                 raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
 
-            result = Object(types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
+            result = Object(types=["object", "list"], keyType=[keyType_init], objType=[objType_init], original_types=[])
 
         if len(items.children[2].children) >= 2:
             self.values[map_Name] = result
@@ -474,91 +550,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         else:
             self.values[map_Name] = result
             return result
-        # if len(items.children[2].children) < 2:
-        #     map_Name = items.children[2].children[0].value
-        #     if items.children[1].data == "vartype":
-        #         if items.children[0].data != items.children[3].data:
-        #             raise Exception(f"Key type mismatch expecting {items.children[0].data} but got {items.children[3].data}")
-        #         if items.children[1] != items.children[4]:
-        #             raise Exception (f"Type mismatch expecting {items.children[1]} but got {items.children[4]}")
-        #
-        #         result = Object(types=["object", "list"], keyType=[items.children[0].data], objType=[items.children[1].children])
-        #
-        #     else:
-        #         keyType_init = items.children[0].data
-        #         if items.children[1].data == "derived":
-        #             objType_init = items.children[1].children[0].value
-        #         else:
-        #             objType_init = items.children[1].data
-        #         keyType = items.children[3].data
-        #
-        #         if items.children[4].data == "derived":
-        #             objType = items.children[4].children[0].value
-        #         else:
-        #             objType = items.children[4].data
-        #
-        #         if keyType_init != keyType and objType_init != objType:
-        #             raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
-        #
-        #         result = Object(types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
-        #
-        #     print("The final obj is", result)
-        #     self.values[map_Name] = result
-        #     return result
-        # else:
-        #
-        #     object_name = items.children[2].children[0].children[0].children[0].value
-        #     if object_name in self.values:
-        #         keyType_init = items.children[0].data
-        #         if items.children[1].data == "derived":
-        #             objType_init = items.children[1].children[0].value
-        #         else:
-        #             objType_init = items.children[1].data
-        #         map_Name = items.children[2].children[1].value
-        #         keyType = items.children[3].data
-        #
-        #         if items.children[4].data == "derived":
-        #             objType = items.children[4].children[0].value
-        #         else:
-        #             objType = items.children[4].data
-        #
-        #         if keyType_init != keyType and objType_init != objType:
-        #             raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
-        #
-        #         result = Object(types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
-        #         self.values[map_Name] = result
-        #         self.values[object_name].set_public_field(map_Name, result)
-        #         return result
-        #     else:
-        #         raise Exception("Object not found")
 
-    # def listdecl(self,items):
-    #     print("list delc", items)
-    #     print("list delc key", items.children[0].data)
-    #     print("list delc if check", items.children[1].data)
-    #     print("items?", items.children[1].data)
-    #     print("map name?", items.children[2].value)
-    #     print("key type?", items.children[3].data)
-    #     keyType_init = items.children[0].data
-    #     if items.children[1].data == "derived":
-    #         objType_init = items.children[1].children[0].value
-    #     else:
-    #         objType_init = items.children[1].data
-    #     map_Name = items.children[2].value
-    #     keyType = items.children[3].data
-    #
-    #     if items.children[4].data == "derived":
-    #         objType = items.children[4].children[0].value
-    #     else:
-    #         objType = items.children[4].data
-    #
-    #     if keyType_init != keyType and objType_init != objType:
-    #         raise ValueError("keyType_init does not match keyType and objType_init does not match objType")
-    #
-    #     result = Object( types=["object", "list"], keyType=[keyType_init], objType=[objType_init])
-    #     self.values[map_Name] = result
-    #     print("the return result is", result)
-    #     return result
 
     def listadd(self,items):
         if len(items.children[0].children) >= 2 :  # --> we have obj
@@ -572,8 +564,12 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         result = []
         for child in items.children[1:]:
             result.append(self.visit(child))
-        if (result[0].get_types()[-1] != self.values[
-            listName].get_keyType()):  # ---> check if key is same type as defines
+        try:
+            item = self.values[listName]
+        except:
+            item = list
+
+        if (result[0].get_types()[-1] != item.get_keyType()):  # ---> check if key is same type as defines
             raise Exception(
                 f"key type mismatch. Key is of type {result[0].get_types()[-1]} but {list.get_keyType()} is expected ")
 
@@ -593,23 +589,23 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     key = result[i].value
                     list = list.get_public_field(key)[0]
 
-            new_list = Object(types=["object", "list"], keyType=[sub_key_type], objType=[sub_obj_type])
+            new_list = Object(types=["object", "list"], keyType=[sub_key_type], objType=[sub_obj_type], original_types=[])
 
             list.add_public_field(result[-3].value, new_list)  # --> result[-3].value is the new key
 
             return
         elif len(items.children) == 3:  # --> this means we have listName, key and value
-            if result[0].value in self.values[listName].public_fields:
-                raise Exception("Key already exists")
+            # if result[0].value in item.public_fields:
+            #     raise Exception("Key already exists")
+            # else:
+            listObjType = item.objType
+            if not any(item_type in result[1].types for item_type in listObjType):
+                raise Exception("invalid datatypes")
             else:
-                listObjType = self.values[listName].objType
-                if not any(item_type in result[1].types for item_type in listObjType):
-                    raise Exception("invalid datatypes")
-                else:
-                    self.values[listName].add_public_field(result[0].value, result[1])
+                item.add_public_field(result[0].value, result[1])
         elif len(items.children) > 3:
 
-            list = self.values[listName]
+            list = item
 
             for i in range(0, len(items.children) - 3):  # --> iterate list with previous keys
                 key = result[i].value
@@ -626,136 +622,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     raise Exception("invalid datatypes")
                 else:
                     list.add_public_field(new_key, value_obj)
-        # if len(items.children[0].children) < 2 :
-        #
-        #     listName = items.children[0].children[0].value
-        #     result = []
-        #     for child in items.children[1:]:
-        #         result.append(self.visit(child))
-        #     if (result[0].get_types()[-1] != self.values[listName].get_keyType()): #---> check if key is same type as defines
-        #         raise Exception (f"key type mismatch. Key is of type {result[0].get_types()[-1]} but {self.values[listName].get_keyType()} is expected ")
-        #
-        #     # if self.values[listName].get_public_field("innerList"):
-        #     if "simpleexpression" not in items.children[-1].data:   # --> this means we initiate inner list
-        #         sub_key_type = items.children[-2].data
-        #         sub_obj_type = items.children[-1].data
-        #         if items.children[-1].data == "vartype":  # --> save object type based on existing sub sub list
-        #             sub_obj_type = items.children[-1].children
-        #         else:
-        #             sub_obj_type = items.children[-1].data
-        #
-        #         list = self.values[listName]
-        #
-        #         if list.public_fields: # --> iterate if a layer has already be  defined
-        #             for i in range(0, len(items.children) - 4) :   #--> iterate through the keys. List -1 is objtype. List -2 is ke type. List -3 is new key initialized
-        #                 key = result[i].value
-        #                 list = list.get_public_field(key)[0]
-        #
-        #         new_list = Object(types=["object", "list"], keyType=[sub_key_type], objType=[sub_obj_type])
-        #
-        #         list.add_public_field(result[-3].value, new_list)   # --> result[-3].value is the new key
-        #
-        #         return
-        #     elif len(items.children) == 3: # --> this means we have listName, key and value
-        #         if result[0].value in self.values[listName].public_fields:
-        #             raise Exception("Key already exists")
-        #         else:
-        #             listObjType = self.values[listName].objType
-        #             if not any(item_type in result[1].types for item_type in listObjType):
-        #                 raise Exception("invalid datatypes")
-        #             else:
-        #                 self.values[listName].add_public_field(result[0].value, result[1])
-        #     elif len(items.children) > 3:
-        #
-        #         list = self.values[listName]
-        #
-        #         for i in range(0, len(items.children) - 3 ): #--> iterate list with previous keys
-        #             key = result[i].value
-        #             list = list.get_public_field(key)[0]
-        #
-        #         new_key = result[i+1].value
-        #         value_obj = result[-1]
-        #         if new_key in list.public_fields:
-        #             raise Exception("Key already exi sts")
-        #         else:
-        #             listObjType = list.objType
-        #             if not any(item_type in result[i+2].types for item_type in listObjType):  #-> +2 for the new value while +1 was the new key
-        #                 raise Exception("invalid datatypes")
-        #             else:
-        #                 list.add_public_field(new_key, value_obj)
-        #
-        #
-        # else :
-        #     object_name = items.children[0].children[0].children[0].children[0].value
-        #     listName = items.children[0].children[1].value
-        #     result = []
-        #     print("object is", object_name)
-        #     print("list name is", listName)
-        #     print("object is", self.values[object_name])
-        #     list = self.values[object_name].get_public_field(listName)
-        #     for child in items.children[1:]:
-        #         result.append(self.visit(child))
-        #     print("")
-        #     if (result[0].get_types()[-1] != self.values[object_name].get_public_field(listName).get_keyType()): #---> check if key is same type as defines
-        #         raise Exception (f"key type mismatch. Key is of type {result[0].get_types()[-1]} but {self.values[object_name].get_public_field(listName).get_keyType()} is expected ")
-        #
-        #     if "simpleexpression" not in items.children[-1].data:  # --> this means we initiate inner list
-        #         sub_key_type = items.children[-2].data
-        #         sub_obj_type = items.children[-1].data
-        #         if items.children[-1].data == "vartype":  # --> save object type based on existing sub sub list
-        #             sub_obj_type = items.children[-1].children
-        #         else:
-        #             sub_obj_type = items.children[-1].data
-        #
-        #
-        #         if list.public_fields:  # --> iterate if a layer has already be  defined
-        #             for i in range(0,
-        #                            len(items.children) - 4):  # --> iterate through the keys. List -1 is objtype. List -2 is ke type. List -3 is new key initialized
-        #                 key = result[i].value
-        #                 list = list.get_public_field(key)[0]
-        #
-        #         new_list = Object(types=["object", "list"], keyType=[sub_key_type], objType=[sub_obj_type])
-        #
-        #         list.add_public_field(result[-3].value, new_list)  # --> result[-3].value is the new key
-        #
-        #         return
-        #
-        #     elif len(items.children) == 3: # --> this means we have listName, key and value
-        #         if result[0].value in self.values[listName].public_fields:
-        #             raise Exception("Key already exists")
-        #         else:
-        #             listObjType = self.values[listName].objType
-        #             if not any(item_type in result[1].types for item_type in listObjType):
-        #                 raise Exception("invalid datatypes")
-        #             else:
-        #                 self.values[listName].add_public_field(result[0].value, result[1])
-        #     elif len(items.children) > 3:
-        #
-        #         list = self.values[listName]
-        #
-        #         for i in range(0, len(items.children) - 3 ): #--> iterate list with previous keys
-        #             key = result[i].value
-        #             list = list.get_public_field(key)[0]
-        #
-        #         new_key = result[i+1].value
-        #         value_obj = result[-1]
-        #         if new_key in list.public_fields:
-        #             raise Exception("Key already exi sts")
-        #         else:
-        #             listObjType = list.objType
-        #             if not any(item_type in result[i+2].types for item_type in listObjType):  #-> +2 for the new value while +1 was the new key
-        #                 raise Exception("invalid datatypes")
-        #             else:
-        #                 list.add_public_field(new_key, value_obj)
-        #
-        #     # if result[0].value in self.values[object_name].get_public_field(listName).public_fields:
-        #     #     raise Exception("Key already exists")
-        #     # else:
-        #     #     listObjType = self.values[object_name].get_public_field(listName).objType
-        #     #     if not any(item_type in result[1].types for item_type in listObjType):
-        #     #         raise Exception("invalid datatypes")
-        #     #     else:
-        #     #         self.values[object_name].get_public_field(listName).add_public_field(result[0].value, result[1])
 
 
     def listget(self,items):
@@ -787,94 +653,40 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 raise ValueError("not a list")
         return list
 
-        # if len(items.children[0].children) < 2 :
-        #     listName = items.children[0].children[0].value
-        #     #if len(items.children) < 2 : # --> simple list, not a sublist
-        #     # if False:
-        #     #     value_result = self.visit(items.children[1])
-        #     #     listKey = value_result.get_public_field("value")
-        #     #     if listName not in self.values:
-        #     #         raise ValueError("List not init")
-        #     #     test = self.values[listName].get_public_field(1)
-        #     #     list = self.values[listName]
-        #     #     if 'list' in list.types:
-        #     #         for key in list.public_fields:
-        #     #             if str(key) == str(listKey) :
-        #     #                 return self.values[listName].get_public_field(key)[0]
-        #     #             else:
-        #     #                 continue
-        #     #     else:
-        #     #         raise ValueError("not a list")
-        #     result_keys = []
-        #     for child in items.children[1:]:
-        #         result_keys.append(self.visit(child))
-        #     list = self.values[listName]
-        #     for i in range(0, len(items.children) - 1):
-        #         if 'list' in list.types:
-        #             for key in list.public_fields:
-        #                 if str(key) == str(result_keys[i].value):
-        #                     list = list.get_public_field(key)[0]
-        #                 else:
-        #                     continue
-        #         else:
-        #             raise ValueError("not a list")
-        #     return list
-        #
-        # else :
-        #     if False:
-        #         print("old")
-        #         # object_name = items.children[0].children[0].children[0].children[0].value
-        #         # map_Name = items.children[0].children[1].value
-        #         # value_result = self.visit(items.children[1])
-        #         # listKey = value_result.get_public_field("value")
-        #         # if object_name not in self.values:
-        #         #     raise ValueError("Object not found")
-        #         # try:
-        #         #     if self.values[object_name].get_public_field(map_Name):
-        #         #
-        #         #         test = self.values[object_name].get_public_field(map_Name).get_public_field(1)
-        #         #         list = self.values[object_name].get_public_field(map_Name)
-        #         #         if 'list' in list.types:
-        #         #             for key in list.public_fields:
-        #         #                 if str(key) == str(listKey):
-        #         #                     return self.values[object_name].get_public_field(map_Name).get_public_field(key)[0]
-        #         #                 else:
-        #         #                     continue
-        #         #         else:
-        #         #             raise ValueError("not a list")
-        #         # except:
-        #         #     raise Exception("list not found")
-        #     else:
-        #         object_name = items.children[0].children[0].children[0].children[0].value
-        #         listName = items.children[0].children[1].value
-        #
-        #         result_keys = []
-        #         for child in items.children[1:]:
-        #             result_keys.append(self.visit(child))
-        #
-        #         if object_name not in self.values:
-        #             raise ValueError("Object not found")
-        #
-        #         try:
-        #             if self.values[object_name].get_public_field(listName):
-        #                 list = self.values[object_name].get_public_field(listName)
-        #                 for i in range(0, len(items.children) - 1):
-        #                     if 'list' in list.types:
-        #                         for key in list.public_fields:
-        #                             if str(key) == str(result_keys[i].value):
-        #                                 list = list.get_public_field(key)[0]
-        #                             else:
-        #                                 continue
-        #                     else:
-        #                         raise ValueError("not a list")
-        #                 return list
-        #         except:
-        #             raise Exception("list not found")
+    def listremove(self,items):
+        if len(items.children[0].children) >= 2:  # --> we have obj
+
+            object_name = items.children[0].children[0].children[0].children[0].value
+            listName = items.children[0].children[1].value
+            try:
+                if self.values[object_name].get_public_field(listName):
+                    list = self.values[object_name].get_public_field(listName)
+            except:
+                raise Exception("list not found")
+        else:       # --> we dont have obj
+            listName = items.children[0].children[0].value
+            list = self.values[listName]
+
+
+        result_keys = []
+        for child in items.children[1:]:
+            result_keys.append(self.visit(child))
+
+        for key in result_keys[:-1]:
+            list = list.get_public_field(key.value)[0]
+
+        if 'list' in list.types:
+            removed_value = list.remove_public_field(result_keys[-1].value)
+        else:
+            raise ValueError("not a list")
+
+
+        return list
+
 
 
 
     def paramdecl(self, items):
-        #print("===============param decl", items)
         return items
 
     def add(self, node):
@@ -892,15 +704,35 @@ class Context(Interpreter, ContextCore, ContextFunctions):
     def pow(self, node):
         return ContextFunctions.power(self, node)
 
+    def smaller_equal_than(self, node):
+        return ContextFunctions.smaller_equal_than(self, node)
     def smaller_than(self, node):
         return ContextFunctions.smaller_than(self, node)
+
+    def bigger_equal_than(self, node):
+        return ContextFunctions.bigger_equal_than(self, node)
+
+    def bigger_than(self, node):
+        return ContextFunctions.bigger_than(self, node)
+
+    def equal(self, node):
+        return ContextFunctions.equal(self, node)
+
+    def not_equal(self, node):
+        return ContextFunctions.not_equal(self, node)
 
     def derived(self, node):
         derived_name = node.children[0]
         result_derived = self.values[derived_name]
+        return result_derived[1].types
 
+
+    def BOOLEAN(self, token):
+        return token.value
     def NAME(self, token):
         return token.value
 
     def NUMBER(self, token):
         return float(token)
+    def STRING(self, token):
+        return token.value

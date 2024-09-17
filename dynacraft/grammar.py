@@ -4,7 +4,7 @@ from IPython.display import Image, display
 
 # Define the grammar
 grammar = """
-start: statement*
+start: statement* COMMENT*
 
 statement: semicolonstatements
          | for_statement
@@ -24,11 +24,8 @@ basicstatement: listget
               | method
               | listadd
               | listdecl
+              | listremove
               
-              
-              
-              
-
 returns : "return" (assignment | reassignment | expression)
 
 assignment: vartype assignable "=" expression 
@@ -37,12 +34,14 @@ reassignment:  assignable "=" expression
 
 methoddecl: "def" NAME methodparams codeblock -> method_decl
 
-if_statement:"if" methodcall codeblock "else" codeblock
-            | "if" comparison_operators":" codeblock "else" codeblock
+if_statement: "if" methodcall":" codeblock
+            | "if" methodcall":" codeblock "else"":" codeblock
+            | "if" comparison_operators":" codeblock 
+            | "if" comparison_operators":" codeblock "else"":" codeblock
 
 while_statement:"while" comparison_operators":" codeblock
 
-for_statement: "for" "key" "in" NAME ":" codeblock
+for_statement: "for" "key" "in" assignable ":" codeblock
 
 methodparams : "(" ")"
              | "(" param_list ")"
@@ -58,6 +57,8 @@ listadd : assignable  "[" simpleexpression "]"("[" simpleexpression "]")* "=" si
 listget : assignable "[" simpleexpression "]" ("[" simpleexpression "]")*
 
 
+listremove : "del" assignable  "[" simpleexpression "]"("[" simpleexpression "]")* 
+
 param_list : paramdecl("," paramdecl)*
 
 paramdecl : vartype NAME
@@ -68,13 +69,14 @@ paramdecl : vartype NAME
 vartype : "string" -> string
         | "int"  -> int
         | "float" -> float
+        | "bool" -> bool
         | "object" -> object
         | "var" -> var
         | NAME -> derived
         | "map" "[" vartype "," vartype "]"
 
 codeblock : "{}"
-          | "{" (semicolonstatements | listget | listadd | if_statement | while_statement)+ "}"
+          | "{" (semicolonstatements | listget | listadd | if_statement | for_statement | while_statement)+ "}"
 
 
 method : methodcall  | blockexec 
@@ -87,6 +89,7 @@ blockexec : "<"NAME">"
 expression : listget |simpleexpression | operators
 
 simpleexpression: methodcall
+          | BOOLEAN
           | NUMBER
           | blockexec 
           | assignable
@@ -104,15 +107,23 @@ operators : expression "+" expression   -> add
           | expression "^" expression   -> pow
           
 comparison_operators : expression "==" expression -> equal
-                     | expression ">=" expression -> bigger_than
-                     | expression "<=" expression ->  smaller_than
+                     | expression ">=" expression -> bigger_equal_than
+                     | expression ">" expression -> bigger_than
+                     | expression "<=" expression ->  smaller_equal_than
+                     | expression "<" expression ->  smaller_than
                      | expression "!=" expression -> not_equal
+
+
+BOOLEAN.10: "true" | "false"  
 
 NAME: /([a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*)/
 NUMBER : /-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?/
 STRING: /"(([^"])|(\\["\\bfnrt]))*"/
 
+COMMENT: "//" /.*/
+
 %ignore " "
+%ignore COMMENT
 """
 
 # Create the parser

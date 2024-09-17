@@ -77,12 +77,63 @@ class ContextFunctions:
             div_result = Object({"value": div_result_value}, types=["object", "float"])
         return div_result
 
-    def smaller_than(self, node):
+    def smaller_equal_than(self, node):
         result = []
         for child in node.children:
             result.append(self.visit(child))
         if result[0].get_public_field("value") <= result[1].get_public_field("value"):
-            comp_result = Object({"value": 1}, types=["object", "float"])
+            comp_result = Object({"value": 'true'}, types=["object", "bool"])
         else:
-            comp_result = Object({"value": 0}, types=["object", "float"])
+            comp_result = Object({"value": 'false'}, types=["object", "bool"])
+        return comp_result
+
+    def smaller_than(self, node):
+        result = []
+        for child in node.children:
+            result.append(self.visit(child))
+        if result[0].get_public_field("value") < result[1].get_public_field("value"):
+            comp_result = Object({"value": 'true'}, types=["object", "bool"])
+        else:
+            comp_result = Object({"value": 'false'}, types=["object", "bool"])
+        return comp_result
+
+
+    def bigger_equal_than(self, node):
+        result = []
+        for child in node.children:
+            result.append(self.visit(child))
+        if result[0].get_public_field("value") >= result[1].get_public_field("value"):
+            comp_result = Object({"value": 'true'}, types=["object", "bool"])
+        else:
+            comp_result = Object({"value": 'false'}, types=["object", "bool"])
+        return comp_result
+
+    def bigger_than(self, node):
+        result = []
+        for child in node.children:
+            result.append(self.visit(child))
+        if result[0].get_public_field("value") > result[1].get_public_field("value"):
+            comp_result = Object({"value": 'true'}, types=["object", "bool"])
+        else:
+            comp_result = Object({"value": 'false'}, types=["object", "bool"])
+        return comp_result
+
+    def equal(self, node):
+        result = []
+        for child in node.children:
+            result.append(self.visit(child))
+        if result[0].get_public_field("value") == result[1].get_public_field("value"):
+            comp_result = Object({"value": 'true'}, types=["object", "bool"])
+        else:
+            comp_result = Object({"value": 'false'}, types=["object", "bool"])
+        return comp_result
+
+    def not_equal(self, node):
+        result = []
+        for child in node.children:
+            result.append(self.visit(child))
+        if result[0].get_public_field("value") != result[1].get_public_field("value"):
+            comp_result = Object({"value": 'true'}, types=["object", "bool"])
+        else:
+            comp_result = Object({"value": 'false'}, types=["object", "bool"])
         return comp_result
