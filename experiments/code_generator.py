@@ -12,7 +12,7 @@ def generate_data(directory="synthetic_data", snippets=20000):
     with open(f"{directory}/valid.txt", "w") as valid:
         with open(f"{directory}/invalid.txt", "w") as invalid:
             for _ in tqdm(range(0, snippets), desc="Generating snippets"):
-                generator = DynaCraftGenerator();
+                generator = DynaCraftGenerator()
                 generator.free_variables = generator.variables[:]
                 generator.free_functions = generator.fun_names[:]
                 generator.used_variables = []

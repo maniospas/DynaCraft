@@ -3,7 +3,7 @@ from torch.utils.data import random_split
 from experiments.learning.dataset import CodeDataset
 from experiments.learning.classifier import LSTMClassifier
 from experiments.learning.training import trainer
-
+from experiments.learning.tokenizer import python_tokenizer
 
 def read_snippets(path):
     with open(path, 'r') as file:
@@ -25,4 +25,4 @@ if __name__ == "__main__":
     print(F"Experimenting on device: {device}")
 
     model = LSTMClassifier(dataset.vocab_size, embedding_dim=16, hidden_dim=16, num_layers=2).to(device)
-    trainer(train_dataset, val_dataset, model, device=device, epochs=30)
+    trainer(train_dataset, val_dataset, model, device=device, epochs=50, keep_best=False, batch_size=64)

@@ -1,5 +1,6 @@
 import random
 
+
 class DynaCraftGenerator:
 
     def __init__(self):
@@ -15,7 +16,6 @@ class DynaCraftGenerator:
         self.used_variables = []
         self.used_functions = ["object"]
         self.code_lines = []
-
 
     def random_true_false(self):
         # choices = [False] * 9 + [True] * 1  # 8 False, 2 True
