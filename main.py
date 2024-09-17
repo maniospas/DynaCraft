@@ -509,107 +509,106 @@ if __name__ == "__main__":
     #                                 """)
 
     # this is a correct one school system
-    input_str = ("""
-
-                        def Student(string name, int age) {
-                                                            object student = object();
-                                                            string student.name = name;
-                                                            int student.age = age;
-                                                            bool student.isExpelled = false;
-                                                            return student;
-                                                            }
-
-                        def ExpelledStudent(object student, string reason) {
-                                                                            student.isExpelled = true;
-                                                                            string student.reason = reason;
-                                                                            return student;
-                                                                            }
-
-                        def School() {
-                                        object school = object();
-                                        map[int, object] school.enrolledStudents = map[int, object]();
-                                        map[int, object] school.expelledStudents = map[int, object]();
-                                        return school;
-                                        }
-
-                        def addStudent(object school, int id, object student) {
-                                                                                school.enrolledStudents[id] = student;
-                                                                                return school;
-                                                                                }
-
-                        def expelStudent(object school, int id, string reason) {
-                                                                                object student = school.enrolledStudents[id];
-                                                                                student = ExpelledStudent(student, reason);
-                                                                                school.expelledStudents[id] = student;
-                                                                                del school.enrolledStudents[id];
-                                                                                return school;
-                                                                                }
-
-                        def updateStudentDetails(object school, int id, string newName, int newAge) {
-                                                                                                    object student = school.enrolledStudents[id];
-                                                                                                    student.name = newName;
-                                                                                                    student.age = newAge;
-                                                                                                    school.enrolledStudents[id] = student;
-                                                                                                    return school;
-                                                                                                    }
-
-                        def reenrollStudent(object school, int id) {
-                                                                    object student = school.expelledStudents[id];
-                                                                    student.isExpelled = false;
-                                                                    school.enrolledStudents[id] = student;
-                                                                    del school.expelledStudents[id];
-                                                                    return school;
-                                                                    }
-
-
-                        def generateReport(object school) {
-                                                            string enrolledHeader = "Enrolled Students:";
-                                                            print(enrolledHeader);
-                                                            for key in school.enrolledStudents: {
-                                                                                                object student = school.enrolledStudents[key];
-                                                                                                string details = "ID: " + key + ", Name: " + student.name + ", Age: " + student.age + ", Expelled: " + student.isExpelled;
-                                                                                                print(details);
-                                                                                                }
-
-                                                            string expelledHeader = "Expelled Students:";
-                                                            print(expelledHeader);
-                                                            for key in school.expelledStudents: {
-                                                                                                 object student = school.expelledStudents[key];
-                                                                                                 string details = "ID: " + key + ", Name: " + student.name + ", Age: " + student.age + ", Expelled: " + student.isExpelled + ", Reason: " + student.reason;
-                                                                                                 print(details);
-                                                                                                }
-                                                            return school;
-                                                            }
-
-
-                        object mySchool = School();
-
-                        object student1 = Student("Alice", 14);
-                        object student2 = Student("Bob", 15);
-                        mySchool = addStudent(mySchool, 1, student1);
-                        mySchool = addStudent(mySchool, 2, student2);
-
-
-                        mySchool = expelStudent(mySchool, 2, "Behavior Issues");
-
-
-                        mySchool = updateStudentDetails(mySchool, 1, "Alice Smith", 15);
-
-
-                        mySchool = reenrollStudent(mySchool, 2);
-
-
-                        generateReport(mySchool);
-
-                                """)
-
     # input_str = ("""
-    #             def vector(){ object o = object(); float o.age = 5.0; return o;}
-    #             vector v = vector();
-    #             float a = v.age;
-    #             print(a);
     #
-    #          """)
+    #                     def Student(string name, int age) {
+    #                                                         object student = object();
+    #                                                         string student.name = name;
+    #                                                         int student.age = age;
+    #                                                         bool student.isExpelled = false;
+    #                                                         return student;
+    #                                                         }
+    #
+    #                     def ExpelledStudent(object student, string reason) {
+    #                                                                         student.isExpelled = true;
+    #                                                                         string student.reason = reason;
+    #                                                                         return student;
+    #                                                                         }
+    #
+    #                     def School() {
+    #                                     object school = object();
+    #                                     map[int, object] school.enrolledStudents = map[int, object]();
+    #                                     map[int, object] school.expelledStudents = map[int, object]();
+    #                                     return school;
+    #                                     }
+    #
+    #                     def addStudent(object school, int id, object student) {
+    #                                                                             school.enrolledStudents[id] = student;
+    #                                                                             return school;
+    #                                                                             }
+    #
+    #                     def expelStudent(object school, int id, string reason) {
+    #                                                                             object student = school.enrolledStudents[id];
+    #                                                                             student = ExpelledStudent(student, reason);
+    #                                                                             school.expelledStudents[id] = student;
+    #                                                                             del school.enrolledStudents[id];
+    #                                                                             return school;
+    #                                                                             }
+    #
+    #                     def updateStudentDetails(object school, int id, string newName, int newAge) {
+    #                                                                                                 object student = school.enrolledStudents[id];
+    #                                                                                                 student.name = newName;
+    #                                                                                                 student.age = newAge;
+    #                                                                                                 school.enrolledStudents[id] = student;
+    #                                                                                                 return school;
+    #                                                                                                 }
+    #
+    #                     def reenrollStudent(object school, int id) {
+    #                                                                 object student = school.expelledStudents[id];
+    #                                                                 student.isExpelled = false;
+    #                                                                 school.enrolledStudents[id] = student;
+    #                                                                 del school.expelledStudents[id];
+    #                                                                 return school;
+    #                                                                 }
+    #
+    #
+    #                     def generateReport(object school) {
+    #                                                         string enrolledHeader = "Enrolled Students:";
+    #                                                         print(enrolledHeader);
+    #                                                         for key in school.enrolledStudents: {
+    #                                                                                             object student = school.enrolledStudents[key];
+    #                                                                                             string details = "ID: " + key + ", Name: " + student.name + ", Age: " + student.age + ", Expelled: " + student.isExpelled;
+    #                                                                                             print(details);
+    #                                                                                             }
+    #
+    #                                                         string expelledHeader = "Expelled Students:";
+    #                                                         print(expelledHeader);
+    #                                                         for key in school.expelledStudents: {
+    #                                                                                              object student = school.expelledStudents[key];
+    #                                                                                              string details = "ID: " + key + ", Name: " + student.name + ", Age: " + student.age + ", Expelled: " + student.isExpelled + ", Reason: " + student.reason;
+    #                                                                                              print(details);
+    #                                                                                             }
+    #                                                         return school;
+    #                                                         }
+    #
+    #
+    #                     object mySchool = School();
+    #
+    #                     object student1 = Student("Alice", 14);
+    #                     object student2 = Student("Bob", 15);
+    #                     mySchool = addStudent(mySchool, 1, student1);
+    #                     mySchool = addStudent(mySchool, 2, student2);
+    #
+    #
+    #                     mySchool = expelStudent(mySchool, 2, "Behavior Issues");
+    #
+    #
+    #                     mySchool = updateStudentDetails(mySchool, 1, "Alice Smith", 15);
+    #
+    #
+    #                     mySchool = reenrollStudent(mySchool, 2);
+    #
+    #
+    #                     generateReport(mySchool);
+    #
+    #                             """)
+
+    input_str = ("""
+                def fun9(string k, string g){ print(k);  }
+def fun3(float g, float i){ object o = object();  float f = 1.9; float h = f - f / f; float c = 16.5 / 2.6 / f; return o; }
+fun9 d = fun9(k, l);
+
+             """)
 
     # input_str = ("""
     #     def print(float x) {

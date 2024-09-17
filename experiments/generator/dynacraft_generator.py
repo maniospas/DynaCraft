@@ -121,7 +121,7 @@ class DynaCraftGenerator:
         return expression
 
 
-    def generate_method_body(self, fun_name = "fun6"):
+    def generate_method_body(self, fun_name = "fun6", in_method=False):
         method_lines = []
         used_objects = []
         local_used_variables = []
@@ -136,10 +136,10 @@ class DynaCraftGenerator:
             local_free_variables.remove(used_name)
             local_used_variables.append(used_name)
             method_lines.append(result)
-
-        return_var = random.choice(used_objects)
-        return_line = f"return {return_var};"
-        method_lines.append(return_line)
+        if in_method:
+            return_var = random.choice(used_objects)
+            return_line = f"return {return_var};"
+            method_lines.append(return_line)
         return method_lines
 
 
@@ -151,7 +151,7 @@ class DynaCraftGenerator:
         params = random.sample(self.variables, k=random.randint(1, 2))
         params_string = ", ".join(f"float {var}" for var in params)
         # method_body = generate_method_body()
-        method_body = f"{' '.join(self.generate_method_body(method_name))}"
+        method_body = f"{' '.join(self.generate_method_body(method_name, in_method=True))}"
         result = f"def {method_name}({params_string}){{ {method_body} }}"
 
         return result
@@ -217,7 +217,8 @@ class DynaCraftGenerator:
             2: self.generate_method,
             3: self.generate_methodcall,
             4: self.generate_if_statement,
-            5: self.while_statement
+            5: self.generate_if_statement,
+            #5: self.while_statement
         }
         return switcher.get(value)()
 
@@ -226,6 +227,11 @@ class DynaCraftGenerator:
             1: lambda:self.init_method_float_var(used_objects, local_free_varianbles, local_used_variables),
             2: lambda:self.init_object(exlude_function),
             3:self.generate_if_statement,
-            4:self.while_statement
+            4:self.generate_if_statement,
+            #4:self.while_statement
         }
         return switcher.get(value)()
+
+    def interpret(self, text):
+        from dynacraft.interpreter import interpret
+        interpret(text)

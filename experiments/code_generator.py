@@ -1,7 +1,6 @@
 from tqdm import tqdm
 import os, random
-from dynacraft.interpreter import interpret
-from experiments.generator.dynacraft_generator import DynaCraftGenerator
+from experiments.generator.dynacraft_generator import DynaCraftGenerator as Generator
 
 
 def generate_data(directory="synthetic_data", snippets=20000):
@@ -12,7 +11,7 @@ def generate_data(directory="synthetic_data", snippets=20000):
     with open(f"{directory}/valid.txt", "w") as valid:
         with open(f"{directory}/invalid.txt", "w") as invalid:
             for _ in tqdm(range(0, snippets), desc="Generating snippets"):
-                generator = DynaCraftGenerator()
+                generator = Generator()
                 generator.free_variables = generator.variables[:]
                 generator.free_functions = generator.fun_names[:]
                 generator.used_variables = []
@@ -21,13 +20,15 @@ def generate_data(directory="synthetic_data", snippets=20000):
                 for _ in range(5):
                     random_int = random.randint(1, 5)
                     result = generator.generic_switch_case(random_int)
-                    final_lines += result
+                    final_lines += result + "\n"
                 try:
+                    # print("___________________________________________________________")
+                    # print(final_lines)
                     input_str = (final_lines)
-                    interpret(input_str)
+                    generator.interpret(input_str)
                     file = valid
                     count_valid += 1
-                except Exception:
+                except (Exception, RuntimeError):
                     file = invalid
                     if count_invalid > 2*count_invalid:  # reduce file writes for invalid (speed up generation)
                         continue
@@ -36,4 +37,4 @@ def generate_data(directory="synthetic_data", snippets=20000):
                 file.write(final_lines)
                 file.write("\n-----\n")
 
-generate_data()
+generate_data("synthetic_data"+Generator.__name__)

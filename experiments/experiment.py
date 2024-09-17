@@ -12,13 +12,13 @@ def read_snippets(path):
 
 # Example Usage
 if __name__ == "__main__":
-    valid = read_snippets('synthetic_data/valid.txt')
-    invalid = read_snippets('synthetic_data/invalid.txt')
+    valid = read_snippets('synthetic_dataPythonGenerator/valid.txt')
+    invalid = read_snippets('synthetic_dataPythonGenerator/invalid.txt')
     if len(invalid) > len(valid):
         invalid = invalid[:len(valid)]
     print(f"Valid snippets {len(valid)}/{len(valid)+len(invalid)}")
 
-    dataset = CodeDataset(valid + invalid,  [0]*len(valid) + [1]*len(invalid))
+    dataset = CodeDataset(valid + invalid,  [0]*len(valid) + [1]*len(invalid), tokenizer=python_tokenizer)
     train_dataset, val_dataset = random_split(dataset, [0.8, 0.2])
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
