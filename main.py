@@ -479,8 +479,8 @@ if __name__ == "__main__":
                 def vec(float a) { print(1); object o = object(); float o.k = 3.0; return o;}
                 vec t = vec(c);
                 
-                custom_assert(t.k == 3);
-                custom_assert(t.k == 4);
+                custom_assert();
+                
             """)
 
 #     input_str = ("""
