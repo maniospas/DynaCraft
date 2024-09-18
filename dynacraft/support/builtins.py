@@ -9,6 +9,7 @@ sysprint = print
 def print(obj = None):
     #sysprint("the obj is", obj)
     if obj is not None:
+        sysprint("obj", obj)
         if "string" in obj.types or "float" in obj.types or "int" in obj.types or "bool" in obj.types:
             sysprint(obj.public_fields["value"])
         else:

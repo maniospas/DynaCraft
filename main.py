@@ -478,8 +478,8 @@ if __name__ == "__main__":
         float c = 3.0;
                 def vec(float a) { print(1); object o = object(); float o.k = 3.0; return o;}
                 vec t = vec(c);
-                
-                custom_assert();
+                string a = "hey world";
+                print(b);
                 
             """)
 

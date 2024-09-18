@@ -261,11 +261,14 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                         if node.children[1].value == "true" or node.children[1].value == "false":
                             obj = Object({"value": node.children[1].value}, types=["object", "bool"])
                         else:
-                            obj = Object({"value": node.children[1].value}, types=["object", "string"])
+                            if '"' in node.children[1].value:
+                                obj = Object({"value": node.children[1].value.strip('"')}, types=["object", "string"])
+                            else:
+                                raise Exception (f"Variable {node.children[1]} not found.")
                 else:
                     raise Exception(f"Invalid variable '{node.children[1].value}'")
             if not self.temp_funs:
-                raise Exception(f"Variable {obj.value} not found")
+                raise Exception(f"Variable {obj.value} not found.")
                 return Object()
             method_name = self.temp_funs.value
             if method_name:
