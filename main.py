@@ -21,17 +21,20 @@ if __name__ == "__main__":
     # input_str = ("""
     #         def vector(){ object o = object();  return o;}
     #         def vector2d(float x, float y){ vector v = vector();  float v.x = x; float v.y = y; return v;}
-    #         def vector3d(float x, float y, float z){ vector2d v = vector2d(x, y);  float v.z = z;  return v;}
-    #         vector2d vec = vector2d(5.0,3.0);
-    #         vector3d vec3 = vector3d(5.0,3.0,1.0);
-    #         print(vec);
     #
+    #         vector vec1 = vector();
+    #         vector vec2 = vector2d(5.0,3.0);
+    #
+    #         def norm(float a, vector b){ object o = object(); float o.result = 3.8; print(b); return o;}
     #         def norm(float a, vector2d b){ object o = object(); float o.result = a + b.x + b.y; print(b); return o;}
-    #         float c = 4.0;
-    #         norm a = norm(1.0, vec);
-    #         float res = a.result;
-    #         print(res);
     #
+    #         norm a = norm(1.0, vec1);
+    #         float res1 = a.result;
+    #         print(res1);
+    #
+    #         norm b = norm(1.0, vec2);
+    #         float res2 = b.result;
+    #         print(res2);
     #      """)
 
     # input_str = ("""
@@ -426,23 +429,172 @@ if __name__ == "__main__":
     #
     #                         """)
 
-    # input_str = ("""
-    #
-    #                             def Employee(int id) {
-    #                                                                                 object o = object();
-    #                                                                                 int o.id = id;
-    #                                                                                 return o;
-    #                                                                             }
-    #
-    #
-    #                             Employee emp1 = Employee(1);
-    #                             Employee emp2 = Employee(2);
-    #                             Employee emp3 = Employee(3);
-    #                             float id = 2.0;
-    #                             if emp2.id <= 6.0 : {print("ok");}
-    #                                     """)
+#     input_str = ("""
+#
+#                                 def Euro(float amount) {
+#     object o = object();
+#     float o.amount = amount;
+#     return o;
+# }
+#
+# def Dollar(float amount) {
+#     object o = object();
+#     float o.amount = amount;
+#     return o;
+# }
+#
+#
+# def convertToDollars(Euro e) {
+#     object o = object();
+#     float exchangeRate = 1.1;
+#     float o.dollarAmount = e.amount * exchangeRate;
+#     return o;
+# }
+#
+#
+# Euro myEuros = Euro(100.0);
+# Dollar myDollars = Dollar(100.0);
+#
+# convertToDollars result = convertToDollars(myEuros);
+# float dollars = result.dollarAmount;
+# string output = "Το ποσό σε δολάρια είναι: $" + dollars;
+# print(output);
+#
+#
+# convertToDollars wrongResult = convertToDollars(myDollars);
+# float wrongDollars = wrongResult.dollarAmount;
+# string wrongOutput = "Το ποσό σε δολάρια είναι: $" + wrongDollars;
+# print(wrongOutput);
+# """)
 
-    ##Employee System
+    # input_str = ("""
+    # float c = 3.0;
+    #         def vec(float a) { print(1); object o = object(); return o;}
+    #         vec t = vec(c);
+    #         print(a);
+    #     """)
+
+    input_str = ("""
+        float c = 3.0;
+                def vec(float a) { print(1); object o = object(); float o.k = 3.0; return o;}
+                vec t = vec(c);
+                
+                custom_assert(t.k == 3);
+                custom_assert(t.k == 4);
+            """)
+
+#     input_str = ("""
+# def Student(string name, int age) {
+#     object o = object();
+#     string o.name = name;
+#     int o.age = age;
+#     bool o.isExpelled = false;
+#     return o;
+# }
+#
+# def ExpelledStudent(Student s, string reason) {
+#     object o = object();
+#     string o.name = s.name;
+#     int o.age = s.age;
+#     bool o.isExpelled = true;
+#     string o.reason = reason;
+#     return o;
+# }
+#
+# def ErasmusStudent(string name, int age, string country) {
+#     Student s = Student(name, age);
+#     string s.country = country;
+#     return s;
+# }
+#
+# def School() {
+#     object o = object();
+#     map[int, Student] o.enrolled = map[int, Student]();
+#     map[int, ExpelledStudent] o.expelled = map[int, ExpelledStudent]();
+#     return o;
+# }
+#
+# def printStudentDetails(Student s) {
+#     string output = "Name: " + s.name + ", Age: " + s.age;
+#     print(output);
+# }
+#
+# def printStudentDetails(ErasmusStudent es) {
+#     string output = "Name: " + es.name + ", Age: " + es.age + ", Country: " + es.country;
+#     print(output);
+# }
+#
+# def printStudentDetails(ExpelledStudent es) {
+#     string output = "Name: " + es.name + ", Age: " + es.age + ", Expelled: Yes, Reason: " + es.reason;
+#     print(output);
+# }
+#
+# def addStudent(School sch, Student s, int id) {
+#     sch.enrolled[id] = s;
+#     return sch;
+# }
+#
+# def expelStudent(School sch, int id, string reason) {
+#     Student s = sch.enrolled[id];
+#     ExpelledStudent es = ExpelledStudent(s, reason);
+#     sch.expelled[id] = es;
+#     del sch.enrolled[id];
+#     return sch;
+# }
+#
+# def updateStudentDetails(School sch, int id, string newName, int newAge) {
+#     Student s = sch.enrolled[id];
+#     s.name = newName;
+#     s.age = newAge;
+#     sch.enrolled[id] = s;
+#     return sch;
+# }
+#
+# def reenrollStudent(School sch, int id) {
+#     ExpelledStudent es = sch.expelled[id];
+#     string esName = es.name;
+#     int esAge = es.age;
+#     Student s = Student(esName, esAge);
+#     sch.enrolled[id] = s;
+#     del sch.expelled[id];
+#     return sch;
+# }
+#
+# def generateReport(School sch) {
+#     print("Enrolled Students:");
+#     for key in sch.enrolled : {
+#         Student s = sch.enrolled[key];
+#         printStudentDetails(s);
+#     }
+#     print("Expelled Students:");
+#     for key in sch.expelled : {
+#         ExpelledStudent es = sch.expelled[key];
+#         printStudentDetails(es);
+#     }
+# }
+#
+# School school = School();
+#
+# Student erasmusStudent = ErasmusStudent("Anna", 20, "Germany");
+#
+# Student student1 = Student("John", 18);
+# Student student2 = Student("Doe", 19);
+#
+# school = addStudent(school, erasmusStudent, 1);
+# school = addStudent(school, student1, 2);
+# school = addStudent(school, student2, 3);
+#
+# school = updateStudentDetails(school, 2, "John Updated", 19);
+#
+# school = expelStudent(school, 3, "Violation of rules");
+#
+# school = reenrollStudent(school, 3);
+#
+# generateReport(school);
+#     """)
+
+
+    # Employee System
     # input_str = ("""
     #
     #                         def Employee(string name, int id, float salary) {
@@ -453,7 +605,7 @@ if __name__ == "__main__":
     #                                                                             return o;
     #                                                                         }
     #                         def Manager(string name, int id, float salary, string department) {
-    #                                                                                             object o = Employee(name, id, salary);
+    #                                                                                             Employee o = Employee(name, id, salary);
     #                                                                                             string o.department = department;
     #                                                                                             return o;
     #                                                                                             }
@@ -473,28 +625,26 @@ if __name__ == "__main__":
     #                         sales.employees[101] = emp1;
     #                         sales.employees[102] = emp2;
     #
-    #                         Manager mgr1 = Manager("Alice Johnson", 201, 80000.0, "Sales");
+    #                         Employee mgr1 = Manager("Alice Johnson", 201, 80000.0, "Sales");
     #                         sales.employees[201] = mgr1;
     #
     #
     #                         Employee emp3 = Employee("Bob Brown", 103, 48000.0);
     #                         hr.employees[103] = emp3;
     #
-    #                         print(mgr1);
     #
-    #                         def printEmployeeDetails(Employee e) {
+    #                         def printDetails(Employee e) {
     #                                                                 string details = "Name: " + e.name + ", ID: " + e.id + ", Salary: " + e.salary;
     #                                                                 print(details);
     #                                                             }
     #
-    #                         def printManagerDetails(Manager m) {
+    #                         def printDetails(Manager m) {
     #                                                                 string details = "Manager: " + m.name + ", ID: " + m.id + ", Salary: " + m.salary + ", Department: " + m.department;
     #                                                                 print(details);
     #                                                             }
     #
     #                         def handleEmployee(Employee e) {
-    #                                                         if e.id >= 200 : {  printManagerDetails(e); }
-    #                                                         else: {printEmployeeDetails(e);}
+    #                                                             printDetails(e);
     #                                                         }
     #                         for key in sales.employees : {
     #                                                         Employee e = sales.employees[key];
@@ -603,12 +753,12 @@ if __name__ == "__main__":
     #
     #                             """)
 
-    input_str = ("""
-                def fun9(string k, string g){ print(k);  }
-def fun3(float g, float i){ object o = object();  float f = 1.9; float h = f - f / f; float c = 16.5 / 2.6 / f; return o; }
-fun9 d = fun9(k, l);
-
-             """)
+#     input_str = ("""
+#                 def fun9(string k, string g){ print(k);  }
+# def fun3(float g, float i){ object o = object();  float f = 1.9; float h = f - f / f; float c = 16.5 / 2.6 / f; return o; }
+# fun9 d = fun9(k, l);
+#
+#              """)
 
     # input_str = ("""
     #     def print(float x) {

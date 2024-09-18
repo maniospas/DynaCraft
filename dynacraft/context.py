@@ -265,6 +265,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 else:
                     raise Exception(f"Invalid variable '{node.children[1].value}'")
             if not self.temp_funs:
+                raise Exception(f"Variable {obj.value} not found")
                 return Object()
             method_name = self.temp_funs.value
             if method_name:
@@ -296,7 +297,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         result = self.visit(node.children[0])
         if isinstance(result, Object) and result.is_empty():
             return self.methodcall_subroutine(node)
-
         method_name = result
         newContext = Context(self)
         param_list_types = []
@@ -344,7 +344,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     method = item
         except:
             return self.methodcall_subroutine(node)
-
         for value in self.values:
             newContext.values[value] = []
             if isinstance(self.values[value], Object):
@@ -360,7 +359,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                     obj.types = sub_item.types
                     newContext.values[value].append(obj)
 
-        if method is None: #--> eithet type mismatch or go into built ins
+        if method is None: #--> either type mismatch or go into built ins
             return self.methodcall_subroutine(node)
 
 
@@ -434,7 +433,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
                 pass
 
     def while_statement(self, node):
-        while self.visit(node.children[0]).value == 1:
+        while self.visit(node.children[0]).value == 'true':
             self.visit(node.children[1])
 
     def for_statement(self, node):

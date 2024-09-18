@@ -17,6 +17,17 @@ def print(obj = None):
         sysprint("")
 
 
+def custom_assert(obj = None):
+    #sysprint("the obj is", obj)
+    if obj is not None:
+        if obj.types[-1] == "bool":
+            if obj.value == "false":
+                raise Exception ("Faulty conditon")
+        else:
+            raise Exception ("Invalid condition datatype")
+    else:
+        sysprint("")
+
 def _create_string_object(value):
     return Object({"value": value}, types=["object", "string"])
 

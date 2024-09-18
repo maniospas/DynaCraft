@@ -81,7 +81,7 @@ codeblock : "{}"
 
 method : methodcall  | blockexec 
 
-methodcall :  simpleexpression "(" (STRING| NAME | NUMBER | methodcall | listget)? ("," (STRING | NAME | NUMBER | methodcall | listget))* ")"
+methodcall :  simpleexpression "(" (STRING| NAME | NUMBER | methodcall | listget | comparison_operators)? ("," (STRING | NAME | NUMBER | methodcall | listget | comparison_operators))* ")"
 
 
 blockexec : "<"NAME">"
