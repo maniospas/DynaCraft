@@ -1,0 +1,126 @@
+def fun9(float b){ object d = object();  float c = 5.5; float h = c; float k = c * c - 8.8 + 2.8; return d; }
+def fun3(float d, float l){ object m = object();  float f = 14.2; float g = 19.2 + 19.9; float l = g; return m; }
+def fun8(float m){ object o = object();  float a = 6.2; float f = 8.4 / 19.6 - a; float i = 19.4 / 4.1 / a / a + f; return o; }
+def fun2(float e, float c){ object k = object();  float i = 5.1; float m = i / i + i; float g = m + m / 8.2 * m / m; return k; }
+def fun4(float m, float h){ object o = object();  float k = 13.5; float m = k * 4.5 * k; float a = 3.3 / k / 11.6 * k; return o; }
+
+-----
+def fun4(float i, float b){ object g = object();  float l = 12.5; float d = 16.9; float k = l + 11.2 / 15.2 - d; return g; }
+def fun3(float l, float m){ object i = object();  float f = 15.7; float h = f - f; float c = h * h * 14.4; return i; }
+float p = 18.1;
+float c = 12.6 + 18.2 - 17.0 / 14.9 * p;
+float b = 1.2 - c * p / 11.3;
+
+-----
+def fun3(float d, float p){ object k = object();  float h = 14.7; float i = h; float m = i + 11.0 - 10.9 - i - h; return k; }
+def fun9(float i){ object f = object();  float c = 0.6; float h = c + c; float p = c * c; return f; }
+def fun8(float e){ object d = object();  float o = 19.5; float p = 5.1 - 7.2 * 8.6 + 15.8; float f = p * 10.8 - o / 14.6; return d; }
+float i = 5.8;
+def fun4(float p){ object e = object();  float l = 12.2; float a = 18.2 - 11.4 / 7.4 - l * 3.0; float p = 10.9; return e; }
+
+-----
+float p = 16.5;
+def fun2(float p){ object f = object();  float l = 17.1; float i = l; float o = i - l + 10.6; return f; }
+float d = 10.6;
+def fun7(float k){ object p = object();  float e = 11.9; float b = 15.7 * e - e + 12.3; float m = e * e + 5.5 - 9.5 - b; return p; }
+def fun6(float a, float b){ object f = object();  float e = 11.5; float g = e + e * 7.4 / 13.0; float b = 3.4 * 15.5 - e * 4.2; return f; }
+
+-----
+float l = 1.1;
+def fun1(float b){ object k = object();  float c = 8.8; float h = 18.0 - 8.5; float l = h + 7.4 * c; return k; }
+fun1 m = fun1(l);
+float i = 13.2 - l * 11.2;
+def fun4(float g){ object a = object();  float e = 10.6; float f = 5.8 / 2.3 / 15.2 + 8.8; float d = 2.0 * f + f - 15.8; return a; }
+
+-----
+float a = 19.9;
+def fun6(float l){ object p = object();  float o = 14.9; float a = 9.0 + 19.1 + o - o / 15.1; float e = 18.9 * 17.5; return p; }
+fun6 g = fun6(13.049);
+float k = 14.2 + 12.9 - 7.1 - a;
+float h = 16.7 + 18.0 - 9.8 + 18.6 - 13.8;
+
+-----
+def fun6(float c, float e){ object m = object();  float o = 9.4; float h = o; float a = h * 19.4 * 0.2 / o / h; return m; }
+def fun9(float a){ object l = object();  float o = 5.7; float g = o * o + o + o; float m = g; return l; }
+float c = 2.6;
+def fun5(float l){ object a = object();  float m = 19.0; float g = 0.3 + m + m * m; float h = 9.4 * m / g - 17.0 + g; return a; }
+float h = 18.1 * 14.4 * 5.3 + c;
+
+-----
+def fun3(float f){ object p = object();  float d = 2.2; float i = 15.0 / d * d * 11.8 - 5.0; float l = 17.6 - d * d; return p; }
+def fun5(float a){ object p = object();  float o = 3.1; float l = o + 18.0 * 16.0; float c = l; return p; }
+fun3 b = fun3(4.296);
+float m = 9.9;
+float o = 8.7 + 2.1 * 12.1 - m * m;
+
+-----
+float a = 15.7;
+def fun3(float b){ object i = object();  float h = 11.6; float o = 19.2 + h + 17.7; float d = 3.1 + 8.2 / h - 0.1 / 1.6; return i; }
+float g = a;
+float p = a * g - a + a / g;
+float l = a;
+
+-----
+float g = 1.2;
+float a = 3.0 + 3.8 - g / 15.8;
+def fun6(float a){ object k = object();  float o = 1.8; float d = o - 4.9 * o; float m = 10.3 / d / 7.1 - 10.4 / 6.9; return k; }
+float k = 9.6 - a - 19.7 - g * 5.8;
+float h = 18.3 - g;
+
+-----
+def fun1(float g){ object c = object();  float p = 11.4; float l = p + 6.6; float h = 6.3; return c; }
+fun1 p = fun1(13.732);
+fun1 g = fun1(1.58);
+def fun5(float m, float g){ object f = object();  float m = 19.7; float o = 13.8 + 3.0 - m - m; float a = o - o + m * 3.5 - 12.7; return f; }
+def fun6(float p, float b){ object i = object();  float g = 16.6; float a = g * 15.3; float m = a - 13.4; return i; }
+
+-----
+float k = 20.0;
+float e = k * 0.3;
+def fun9(float h, float o){ object k = object();  float d = 12.2; float o = d; float e = 4.4 / o - 0.6; return k; }
+float p = 11.1 / k - e * 2.1;
+def fun8(float g, float e){ object d = object();  float k = 16.9; float m = k - k; float f = 16.0 + m - k * 1.4 / k; return d; }
+
+-----
+float h = 1.7;
+float a = 11.5 * h / h * 6.9 - 1.0;
+def fun8(float e){ object h = object();  float d = 17.7; float l = d / d + 17.7 / d; float g = l + 7.8 - 12.7 - d; return h; }
+float d = 11.0;
+def fun4(float i, float d){ object m = object();  float p = 16.7; float k = p + 6.7 * 15.5 * p / p; float f = 16.3 * k * 8.4 + k - p; return m; }
+
+-----
+def fun6(float i, float e){ object l = object();  float p = 11.0; float g = p - p - 14.8 - p; float o = p / g; return l; }
+float e = 7.9;
+float a = e - 13.7 + 3.4;
+def fun8(float o, float k){ object k = object();  float d = 18.7; float a = 12.9 * 1.6 + d - d; float l = d * 7.8 - 19.0 + 2.3 / 15.4; return k; }
+float i = e / 3.6 / a;
+
+-----
+def fun2(float f){ object e = object();  float i = 1.1; float m = i * 2.3 + i * 2.9; float d = 18.5 - m - 14.6 * 8.1 - 2.3; return e; }
+float d = 5.5;
+def fun8(float i){ object o = object();  float f = 12.1; float k = f; float e = k + f / 6.0; return o; }
+def fun1(float o){ object g = object();  float o = 7.8; float l = 3.7 * 15.8 - 17.4; float c = o * 1.7 - o * l; return g; }
+fun1 a = fun1(11.589);
+
+-----
+def fun7(float e){ object l = object();  float i = 7.4; float f = i - i; float a = 7.0 / 10.0 + 4.6 + 4.0; return l; }
+float f = 2.0;
+float g = f / f / f / 2.6;
+float h = f;
+float e = f - h * 15.7;
+
+-----
+float g = 15.2;
+float i = g * g * g / 2.5 / 15.5;
+def fun9(float h, float c){ object o = object();  float g = 8.9; float p = g; float k = 2.4 - 3.7 + p / 19.9; return o; }
+def fun2(float k, float f){ object k = object();  float a = 15.5; float o = 5.3; float b = 10.2 * o; return k; }
+float b = i + 3.3 * 19.2;
+
+-----
+float g = 19.5;
+def fun5(float b){ object o = object();  float p = 10.7; float c = 4.5 + 12.6 * p * 2.7 * 16.5; float e = 15.0 / 3.1 / c / p + 17.8; return o; }
+float m = 12.1 + 6.2;
+def fun7(float g, float m){ object o = object();  float i = 13.2; float f = i / 4.4 + 14.9 / 18.5; float e = i + 13.5 + i; return o; }
+def fun4(float c){ object h = object();  float c = 17.8; float k = 13.9 / c - 15.0 + c; float a = k - 17.3 / 2.8 * c * k; return h; }
+
+-----

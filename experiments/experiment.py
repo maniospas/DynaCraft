@@ -12,8 +12,8 @@ def read_snippets(path):
 
 # Example Usage
 if __name__ == "__main__":
-    valid = read_snippets('synthetic_dataPythonGenerator/valid.txt')
-    invalid = read_snippets('synthetic_dataPythonGenerator/invalid.txt')
+    valid = read_snippets('synthetic_dataDynaCraftGenerator/valid.txt')
+    invalid = read_snippets('synthetic_dataDynaCraftGenerator/invalid.txt')
     if len(invalid) > len(valid):
         invalid = invalid[:len(valid)]
     print(f"Valid snippets {len(valid)}/{len(valid)+len(invalid)}")

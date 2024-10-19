@@ -1,9 +1,9 @@
 from tqdm import tqdm
 import os, random
-from experiments.generator.dynacraft_generator import DynaCraftGenerator as Generator
+from experiments.generator.python_generator import PythonGenerator as Generator
 
 
-def generate_data(directory="synthetic_data", snippets=20000):
+def generate_data(directory="synthetic_data", snippets=2000):
     if not os.path.exists(directory):
         os.makedirs(directory)
     count_valid = 0

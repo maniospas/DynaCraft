@@ -273,7 +273,6 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             method_name = self.temp_funs.value
             if method_name:
                 method_to_call = getattr(builtins, method_name, None)
-                print(obj)
                 if method_to_call:
                     retObj = method_to_call(obj)
                 else:
