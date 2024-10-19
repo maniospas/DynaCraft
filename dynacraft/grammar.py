@@ -63,8 +63,6 @@ param_list : paramdecl("," paramdecl)*
 
 paramdecl : vartype NAME
           | "self"
-          
-
 
 vartype : "string" -> string
         | "int"  -> int
@@ -128,4 +126,6 @@ COMMENT: "//" /.*/
 
 # Create the parser
 parser = Lark(grammar, start='start', parser='lalr')
+
+
 #returns : "return" (assignment | reassignment | expression)

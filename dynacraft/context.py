@@ -130,7 +130,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
         if var_name in self.values:
             already_assigned = set(self.values[var_name].types)
             to_assign = set(result[1].types)
-            if already_assigned.issubset(to_assign):
+            if to_assign.issubset(already_assigned):
                 self.values[var_name].set_public_field('value', var_value)
                 return self.values[var_name]
             else:
@@ -273,6 +273,7 @@ class Context(Interpreter, ContextCore, ContextFunctions):
             method_name = self.temp_funs.value
             if method_name:
                 method_to_call = getattr(builtins, method_name, None)
+                print(obj)
                 if method_to_call:
                     retObj = method_to_call(obj)
                 else:

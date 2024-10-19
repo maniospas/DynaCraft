@@ -20,9 +20,13 @@ def print(obj = None):
 
 def custom_assert(obj = None):
     if obj is not None:
-        if obj.types[-1] == "bool":
+        if "bool" in obj.types:
             if obj.value == "false":
-                raise Exception ("Faulty conditon")
+                sysprint("Faulty conditon")
+            elif obj.value == "true":
+                return
+            else :
+                raise Exception("Invalid condition datatype")
         else:
             raise Exception ("Invalid condition datatype")
     else:

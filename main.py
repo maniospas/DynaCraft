@@ -1,6 +1,5 @@
 from dynacraft.interpreter import interpret
 
-
 if __name__ == "__main__":
     # input_str = ("""
     #     def c1() {
@@ -217,7 +216,6 @@ if __name__ == "__main__":
     #                     print(test[1]);
     #                     """)
 
-
     # input_str = ("""
     #                     def Student(string name, int age) {
     #                                                          object s = object();
@@ -429,43 +427,43 @@ if __name__ == "__main__":
     #
     #                         """)
 
-#     input_str = ("""
-#
-#                                 def Euro(float amount) {
-#     object o = object();
-#     float o.amount = amount;
-#     return o;
-# }
-#
-# def Dollar(float amount) {
-#     object o = object();
-#     float o.amount = amount;
-#     return o;
-# }
-#
-#
-# def convertToDollars(Euro e) {
-#     object o = object();
-#     float exchangeRate = 1.1;
-#     float o.dollarAmount = e.amount * exchangeRate;
-#     return o;
-# }
-#
-#
-# Euro myEuros = Euro(100.0);
-# Dollar myDollars = Dollar(100.0);
-#
-# convertToDollars result = convertToDollars(myEuros);
-# float dollars = result.dollarAmount;
-# string output = "Το ποσό σε δολάρια είναι: $" + dollars;
-# print(output);
-#
-#
-# convertToDollars wrongResult = convertToDollars(myDollars);
-# float wrongDollars = wrongResult.dollarAmount;
-# string wrongOutput = "Το ποσό σε δολάρια είναι: $" + wrongDollars;
-# print(wrongOutput);
-# """)
+    #     input_str = ("""
+    #
+    #                                 def Euro(float amount) {
+    #     object o = object();
+    #     float o.amount = amount;
+    #     return o;
+    # }
+    #
+    # def Dollar(float amount) {
+    #     object o = object();
+    #     float o.amount = amount;
+    #     return o;
+    # }
+    #
+    #
+    # def convertToDollars(Euro e) {
+    #     object o = object();
+    #     float exchangeRate = 1.1;
+    #     float o.dollarAmount = e.amount * exchangeRate;
+    #     return o;
+    # }
+    #
+    #
+    # Euro myEuros = Euro(100.0);
+    # Dollar myDollars = Dollar(100.0);
+    #
+    # convertToDollars result = convertToDollars(myEuros);
+    # float dollars = result.dollarAmount;
+    # string output = "Το ποσό σε δολάρια είναι: $" + dollars;
+    # print(output);
+    #
+    #
+    # convertToDollars wrongResult = convertToDollars(myDollars);
+    # float wrongDollars = wrongResult.dollarAmount;
+    # string wrongOutput = "Το ποσό σε δολάρια είναι: $" + wrongDollars;
+    # print(wrongOutput);
+    # """)
 
     # input_str = ("""
     # float c = 3.0;
@@ -474,125 +472,334 @@ if __name__ == "__main__":
     #         print(a);
     #     """)
 
-    input_str = ("""
-        float c = 3.0;
-                def vec(float a) { print(1); object o = object(); float o.k = 3.0; return o;}
-                vec t = vec(c);
-                string a = "hey world";
-                print(b);
-                
-            """)
+    # input_str = ("""
+    #     def foo(float a){ float result = a^2; return result;}
+    #     float a = 2.5;
+    #     foo b = foo(a);
+    #     if b == 2: {print("positive");}else:{print("negative");}
+    #     while b<=8: {b = b+1.0; print(a); print("variable incremented");}
+    #     print(b);
+    #         """)
 
-#     input_str = ("""
-# def Student(string name, int age) {
-#     object o = object();
-#     string o.name = name;
-#     int o.age = age;
-#     bool o.isExpelled = false;
-#     return o;
-# }
-#
-# def ExpelledStudent(Student s, string reason) {
-#     object o = object();
-#     string o.name = s.name;
-#     int o.age = s.age;
-#     bool o.isExpelled = true;
-#     string o.reason = reason;
-#     return o;
-# }
-#
-# def ErasmusStudent(string name, int age, string country) {
-#     Student s = Student(name, age);
-#     string s.country = country;
-#     return s;
-# }
-#
-# def School() {
-#     object o = object();
-#     map[int, Student] o.enrolled = map[int, Student]();
-#     map[int, ExpelledStudent] o.expelled = map[int, ExpelledStudent]();
-#     return o;
-# }
-#
-# def printStudentDetails(Student s) {
-#     string output = "Name: " + s.name + ", Age: " + s.age;
-#     print(output);
-# }
-#
-# def printStudentDetails(ErasmusStudent es) {
-#     string output = "Name: " + es.name + ", Age: " + es.age + ", Country: " + es.country;
-#     print(output);
-# }
-#
-# def printStudentDetails(ExpelledStudent es) {
-#     string output = "Name: " + es.name + ", Age: " + es.age + ", Expelled: Yes, Reason: " + es.reason;
-#     print(output);
-# }
-#
-# def addStudent(School sch, Student s, int id) {
-#     sch.enrolled[id] = s;
-#     return sch;
-# }
-#
-# def expelStudent(School sch, int id, string reason) {
-#     Student s = sch.enrolled[id];
-#     ExpelledStudent es = ExpelledStudent(s, reason);
-#     sch.expelled[id] = es;
-#     del sch.enrolled[id];
-#     return sch;
-# }
-#
-# def updateStudentDetails(School sch, int id, string newName, int newAge) {
-#     Student s = sch.enrolled[id];
-#     s.name = newName;
-#     s.age = newAge;
-#     sch.enrolled[id] = s;
-#     return sch;
-# }
-#
-# def reenrollStudent(School sch, int id) {
-#     ExpelledStudent es = sch.expelled[id];
-#     string esName = es.name;
-#     int esAge = es.age;
-#     Student s = Student(esName, esAge);
-#     sch.enrolled[id] = s;
-#     del sch.expelled[id];
-#     return sch;
-# }
-#
-# def generateReport(School sch) {
-#     print("Enrolled Students:");
-#     for key in sch.enrolled : {
-#         Student s = sch.enrolled[key];
-#         printStudentDetails(s);
-#     }
-#     print("Expelled Students:");
-#     for key in sch.expelled : {
-#         ExpelledStudent es = sch.expelled[key];
-#         printStudentDetails(es);
-#     }
-# }
-#
-# School school = School();
-#
-# Student erasmusStudent = ErasmusStudent("Anna", 20, "Germany");
-#
-# Student student1 = Student("John", 18);
-# Student student2 = Student("Doe", 19);
-#
-# school = addStudent(school, erasmusStudent, 1);
-# school = addStudent(school, student1, 2);
-# school = addStudent(school, student2, 3);
-#
-# school = updateStudentDetails(school, 2, "John Updated", 19);
-#
-# school = expelStudent(school, 3, "Violation of rules");
-#
-# school = reenrollStudent(school, 3);
-#
-# generateReport(school);
-#     """)
+    # input_str = ("""
+    #
+    #                 int a = 3;
+    #                 def foo(){
+    #                     bool c = true;
+    #                     return c;
+    #                     }
+    #                 foo v = foo();
+    #                 print(a);
+    #                 custom_assert(v);
+    #
+    #
+    #                     """)
 
+    #     input_str = ("""
+    #                 def Student(string name) {
+    #     object student = object();
+    #     string student.name = name;
+    #     bool student.isExpelled = false;
+    #     bool student.inErasmus = false;
+    #     return student;
+    # }
+    #
+    # def expel_student(Student s, string reason) {
+    #     bool s.isExpelled = true;
+    #     string expelMessage = s.name + " has been expelled for reason: " + reason;
+    #     string messageToPrint = expelMessage;
+    #     print(messageToPrint);
+    #     return s;
+    # }
+    #
+    # def is_not_expelled(Student s) {
+    #     if s.isExpelled == true: {
+    #         bool status = false;
+    #     }
+    #     else : {
+    #     bool status = true;
+    #     }
+    #
+    #     return status;
+    # }
+    #
+    # def enroll_to_erasmus(Student s) {
+    #     if is_not_expelled(s) : {
+    #         bool s.inErasmus = true;
+    #         string enrollMessage = s.name + " has been enrolled in the Erasmus program.";
+    #         string messageToPrint = enrollMessage;
+    #         print(messageToPrint);
+    #     } else : {
+    #         string denialMessage = s.name + " cannot be enrolled in the Erasmus program as they have been expelled.";
+    #         string messageToPrint = denialMessage;
+    #         print(messageToPrint);
+    #     }
+    #     return s;
+    # }
+    #
+    # Student student1 = Student("Alice");
+    # Student student2 = Student("Bob");
+    # Student student3 = Student("Charlie");
+    #
+    # student1 = expel_student(student1, "Violation of code of conduct");
+    #
+    # custom_assert(is_not_expelled(student2));
+    # custom_assert(is_not_expelled(student3));
+    #
+    # student1 = enroll_to_erasmus(student1);
+    # student2 = enroll_to_erasmus(student2);
+    # student3 = enroll_to_erasmus(student3);
+    #
+    #                     """)
+
+    #     input_str = ("""
+    #
+    # def create_student(string name) {
+    #     object student = object();
+    #     string student.name = name;
+    #     bool student.expelled = false;
+    #     bool student.erasmus_enrolled = false;
+    #     return student;
+    # }
+    #
+    # def expel_student(object student, string reason) {
+    #     bool student.expelled = true;
+    #     string expel_msg = student.name + " has been expelled for: " + reason;
+    #     print(expel_msg);
+    #     return student;
+    # }
+    #
+    # def check_if_expelled(object student) {
+    #     if 1==1 : {
+    #         string msg = student.name + " is expelled.";
+    #         print(msg);
+    #     }
+    # }
+    #
+    #
+    #
+    #
+    #
+    #
+    #                         """)
+
+    #     input_str = ("""
+    #
+    #
+    # def create_student(string name) {
+    #     object student = object();
+    #     string student.name = name;
+    #     bool student.is_expelled = false;
+    #     string student.expel_reason = "";
+    #     bool student.erasmus_enrolled = false;
+    #     return student;
+    # }
+    #
+    #
+    # def expel_student(object student, string reason) {
+    #     student.is_expelled = true;
+    #     student.expel_reason = reason;
+    #     return student;
+    # }
+    #
+    #
+    # def check_expelled(object student) {
+    #     bool temp = student.is_expelled;
+    #     custom_assert(temp == false);
+    #     return student;
+    # }
+    #
+    #
+    # def enroll_in_erasmus(object student) {
+    #     bool temp = student.is_expelled;
+    #     if temp == false : {
+    #         student.erasmus_enrolled = true;
+    #     }
+    #     return student;
+    # }
+    #
+    #
+    # def main() {
+    #
+    #     object student1 = create_student("Alice");
+    #     object student2 = create_student("Bob");
+    #     object student3 = create_student("Charlie");
+    #
+    #
+    #     student1 = expel_student(student1, "Cheating in exams");
+    #
+    #
+    #     check_expelled(student2);
+    #     check_expelled(student3);
+    #
+    #
+    #     student1 = enroll_in_erasmus(student1);
+    #     student2 = enroll_in_erasmus(student2);
+    #     student3 = enroll_in_erasmus(student3);
+    #
+    #
+    #     string status1 = "Alice enrolled in Erasmus: " + student1.erasmus_enrolled;
+    #     print(status1);
+    #
+    #     string status2 = "Bob enrolled in Erasmus: " + student2.erasmus_enrolled;
+    #     print(status2);
+    #
+    #     string status3 = "Charlie enrolled in Erasmus: " + student3.erasmus_enrolled;
+    #     print(status3);
+    # }
+    #
+    #
+    # main();
+    #
+    #
+    #
+    #                             """)
+
+    # input_str = ("""
+    #                 def Employee(string name, int id, float salary){
+    #                     object o = object();
+    #                     string o.name = name;
+    #                     int o.id = id;
+    #                     float o.salary = salary;
+    #                     return o;
+    #                     }
+    #
+    #                 def Manager(string name, int id, float salary, string department){
+    #                         Employee o = Employee(name, id, salary)
+    #                         string o.department = department;
+    #                         return o;
+    #                 }
+    #
+    #                 Manager mgr1 = Manager("Alice", 201, 80000.0, "Sales");
+    #                 Employee  emp1 = Employee("dimim")
+    #                             """)
+
+    # input_str = ("""
+    #         def isnonzero(float x) {
+    #                                     if x<=0:{print("Invalid error");}
+    #                                     return x;
+    #                                 }
+    #
+    #         def safediv(float x, isnonzero y) {
+    #                                             return x/y;
+    #                                             }
+    #
+    #         float x = 1.0;
+    #         float y = 1.0;
+    #         print(x);
+    #         print(isnonzero(y));
+    #
+    #             """)
+
+    #     input_str = ("""
+    # def Student(string name, int age) {
+    #     object o = object();
+    #     string o.name = name;
+    #     int o.age = age;
+    #     bool o.isExpelled = false;
+    #     return o;
+    # }
+    #
+    # def ExpelledStudent(Student s, string reason) {
+    #     object o = object();
+    #     string o.name = s.name;
+    #     int o.age = s.age;
+    #     bool o.isExpelled = true;
+    #     string o.reason = reason;
+    #     return o;
+    # }
+    #
+    # def ErasmusStudent(string name, int age, string country) {
+    #     Student s = Student(name, age);
+    #     string s.country = country;
+    #     return s;
+    # }
+    #
+    # def School() {
+    #     object o = object();
+    #     map[int, Student] o.enrolled = map[int, Student]();
+    #     map[int, ExpelledStudent] o.expelled = map[int, ExpelledStudent]();
+    #     return o;
+    # }
+    #
+    # def printStudentDetails(Student s) {
+    #     string output = "Name: " + s.name + ", Age: " + s.age;
+    #     print(output);
+    # }
+    #
+    # def printStudentDetails(ErasmusStudent es) {
+    #     string output = "Name: " + es.name + ", Age: " + es.age + ", Country: " + es.country;
+    #     print(output);
+    # }
+    #
+    # def printStudentDetails(ExpelledStudent es) {
+    #     string output = "Name: " + es.name + ", Age: " + es.age + ", Expelled: Yes, Reason: " + es.reason;
+    #     print(output);
+    # }
+    #
+    # def addStudent(School sch, Student s, int id) {
+    #     sch.enrolled[id] = s;
+    #     return sch;
+    # }
+    #
+    # def expelStudent(School sch, int id, string reason) {
+    #     Student s = sch.enrolled[id];
+    #     ExpelledStudent es = ExpelledStudent(s, reason);
+    #     sch.expelled[id] = es;
+    #     del sch.enrolled[id];
+    #     return sch;
+    # }
+    #
+    # def updateStudentDetails(School sch, int id, string newName, int newAge) {
+    #     Student s = sch.enrolled[id];
+    #     s.name = newName;
+    #     s.age = newAge;
+    #     sch.enrolled[id] = s;
+    #     return sch;
+    # }
+    #
+    # def reenrollStudent(School sch, int id) {
+    #     ExpelledStudent es = sch.expelled[id];
+    #     string esName = es.name;
+    #     int esAge = es.age;
+    #     Student s = Student(esName, esAge);
+    #     sch.enrolled[id] = s;
+    #     del sch.expelled[id];
+    #     return sch;
+    # }
+    #
+    # def generateReport(School sch) {
+    #     print("Enrolled Students:");
+    #     for key in sch.enrolled : {
+    #         Student s = sch.enrolled[key];
+    #         printStudentDetails(s);
+    #     }
+    #     print("Expelled Students:");
+    #     for key in sch.expelled : {
+    #         ExpelledStudent es = sch.expelled[key];
+    #         printStudentDetails(es);
+    #     }
+    # }
+    #
+    # School school = School();
+    #
+    # Student erasmusStudent = ErasmusStudent("Anna", 20, "Germany");
+    #
+    # Student student1 = Student("John", 18);
+    # Student student2 = Student("Doe", 19);
+    #
+    # school = addStudent(school, erasmusStudent, 1);
+    # school = addStudent(school, student1, 2);
+    # school = addStudent(school, student2, 3);
+    #
+    # school = updateStudentDetails(school, 2, "John Updated", 19);
+    #
+    # school = expelStudent(school, 3, "Violation of rules");
+    #
+    # school = reenrollStudent(school, 3);
+    #
+    # generateReport(school);
+    #     """)
 
     # Employee System
     # input_str = ("""
@@ -753,12 +960,12 @@ if __name__ == "__main__":
     #
     #                             """)
 
-#     input_str = ("""
-#                 def fun9(string k, string g){ print(k);  }
-# def fun3(float g, float i){ object o = object();  float f = 1.9; float h = f - f / f; float c = 16.5 / 2.6 / f; return o; }
-# fun9 d = fun9(k, l);
-#
-#              """)
+    #     input_str = ("""
+    #                 def fun9(string k, string g){ print(k);  }
+    # def fun3(float g, float i){ object o = object();  float f = 1.9; float h = f - f / f; float c = 16.5 / 2.6 / f; return o; }
+    # fun9 d = fun9(k, l);
+    #
+    #              """)
 
     # input_str = ("""
     #     def print(float x) {
